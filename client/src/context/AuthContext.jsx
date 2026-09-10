@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import refreshApi from '../api/refreshApi'
 
 const AuthContext = createContext()
 
@@ -10,12 +11,30 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await fetch(
+                let response = await fetch(
                     'http://localhost:8000/api/auth/profile',
                     {
                         credentials: 'include'
                     }
                 )
+
+            //refresh token if the access token is expired
+
+                   if (response.status === 401) {
+            const refreshed = await refreshApi()
+
+            if (!refreshed) {
+                setUser(null)
+                return
+            }
+
+             response = await fetch(
+                'http://localhost:8000/api/auth/profile',
+                {
+                    credentials: 'include'
+                }
+            )
+        }
 
                 if (!response.ok) {
                     setUser(null)
