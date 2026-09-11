@@ -4,6 +4,7 @@ dotenv.config()
 const express = require('express')
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
+const projectRoutes = require('./routes/projectRoutes')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
@@ -26,6 +27,7 @@ app.get('/',(req,res)=>{
     res.send("Server is Running")
 })
 app.use('/api/auth', authRoutes)
+app.use('/api/projects', projectRoutes)
 
 //Start the server
 const port = process.env.PORT

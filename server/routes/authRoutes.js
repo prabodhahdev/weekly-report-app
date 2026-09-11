@@ -2,7 +2,6 @@ const express = require('express')
 const {register,login , refresh, logout} = require('../controllers/authController')
 const registerValidator = require('../middlewares/validators/authValidator')
 const authMiddleware = require('../middlewares/authMiddleware')
-const roleMiddleware = require('../middlewares/roleMiddleware')
 
 const router = express.Router()
 
