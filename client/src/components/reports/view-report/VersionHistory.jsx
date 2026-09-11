@@ -19,10 +19,52 @@ const VersionHistory = ({
         );
     }
 
+    function formatStatus(status) {
+        if (!status) {
+            return "Draft";
+        }
+
+        if (status === "needs_correction") {
+            return "Needs Correction";
+        }
+
+        if (status === "submitted") {
+            return "Submitted";
+        }
+
+        if (status === "approved") {
+            return "Approved";
+        }
+
+        if (status === "draft") {
+            return "Draft";
+        }
+
+        return status;
+    }
+
+    function getStatusClass(status) {
+        if (status === "approved") {
+            return "bg-[#00df82]/10 text-[#008f5a]";
+        }
+
+        if (status === "needs_correction") {
+            return "bg-red-50 text-red-600";
+        }
+
+        if (status === "submitted") {
+            return "bg-blue-50 text-blue-600";
+        }
+
+        return "bg-slate-100 text-slate-600";
+    }
+
     return (
         <aside className="rounded-lg border border-slate-200 bg-white">
+
             {/* Header */}
             <div className="border-b border-slate-200 px-5 py-4">
+
                 <h2 className="text-sm font-bold uppercase tracking-wider text-[#010a1f]">
                     Report Versions
                 </h2>
@@ -30,20 +72,22 @@ const VersionHistory = ({
                 <p className="mt-1 text-xs text-slate-500">
                     View previous report submissions
                 </p>
+
             </div>
 
             {/* Versions */}
             <div className="space-y-3 p-4">
+
                 {versions.map((version) => {
-                    const isSelected =
-                        version._id === selectedVersionId ||
-                        version.id === selectedVersionId;
 
                     const versionId =
                         version._id || version.id;
 
+                    const isSelected =
+                        versionId === selectedVersionId;
+
                     const status =
-                        version.status || "Submitted";
+                        version.status || "draft";
 
                     return (
                         <div
@@ -54,9 +98,12 @@ const VersionHistory = ({
                                     : "border-slate-200 bg-white hover:border-slate-300"
                             }`}
                         >
+
                             {/* Version + Selected */}
                             <div className="flex items-start justify-between gap-3">
+
                                 <div>
+
                                     <p
                                         className={`font-semibold ${
                                             isSelected
@@ -65,13 +112,12 @@ const VersionHistory = ({
                                         }`}
                                     >
                                         Version{" "}
-                                        {version.versionNumber ||
-                                            version.version ||
-                                            "-"}
+                                        {version.versionNumber || "-"}
                                     </p>
 
                                     {version.submittedAt && (
                                         <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+
                                             <Clock3 size={13} />
 
                                             <span>
@@ -79,8 +125,10 @@ const VersionHistory = ({
                                                     version.submittedAt
                                                 ).toLocaleDateString()}
                                             </span>
+
                                         </div>
                                     )}
+
                                 </div>
 
                                 {isSelected && (
@@ -88,22 +136,20 @@ const VersionHistory = ({
                                         Viewing
                                     </span>
                                 )}
+
                             </div>
 
                             {/* Status */}
                             <div className="mt-3">
+
                                 <span
-                                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                                        status === "Approved"
-                                            ? "bg-[#00df82]/10 text-[#008f5a]"
-                                            : status ===
-                                              "Needs Correction"
-                                            ? "bg-red-50 text-red-600"
-                                            : "bg-slate-100 text-slate-600"
-                                    }`}
+                                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
+                                        status
+                                    )}`}
                                 >
-                                    {status}
+                                    {formatStatus(status)}
                                 </span>
+
                             </div>
 
                             {/* View Button */}
@@ -119,16 +165,21 @@ const VersionHistory = ({
                                         : "bg-[#010a1f] text-white hover:bg-[#0a1f3d]"
                                 }`}
                             >
+
                                 <Eye size={16} />
 
                                 {isSelected
                                     ? "Viewing"
                                     : "View"}
+
                             </button>
+
                         </div>
                     );
                 })}
+
             </div>
+
         </aside>
     );
 };

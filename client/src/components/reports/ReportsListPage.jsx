@@ -26,23 +26,44 @@ export default function ReportsListPage({
     const filteredReports = useMemo(() => {
         return reports
             .filter((r) => {
-                if (filters.project && r.project !== filters.project) {
+
+                const projectName =
+                    typeof r.project === "object"
+                        ? r.project?.name
+                        : r.project;
+
+                if (
+                    filters.project &&
+                    projectName !== filters.project
+                ) {
                     return false;
                 }
 
-                if (filters.status && r.status !== filters.status) {
+                if (
+                    filters.status &&
+                    r.status !== filters.status
+                ) {
                     return false;
                 }
 
-                if (filters.from && r.weekStart < filters.from) {
+                if (
+                    filters.from &&
+                    r.weekStart < filters.from
+                ) {
                     return false;
                 }
 
-                if (filters.to && r.weekEnd > filters.to) {
+                if (
+                    filters.to &&
+                    r.weekEnd > filters.to
+                ) {
                     return false;
                 }
 
-                if (filters.member && r.memberName !== filters.member) {
+                if (
+                    filters.member &&
+                    r.memberName !== filters.member
+                ) {
                     return false;
                 }
 
@@ -55,10 +76,12 @@ export default function ReportsListPage({
 
     return (
         <div className="w-full h-full flex flex-col">
+
             <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
 
                 {/* Page Header */}
                 <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+
                     <div>
                         <h1 className="text-lg font-semibold text-[#1b496d]">
                             {title}
@@ -79,7 +102,9 @@ export default function ReportsListPage({
                             New report
                         </button>
                     )}
+
                 </div>
+
 
                 {/* Reports Card */}
                 <Card
@@ -87,6 +112,7 @@ export default function ReportsListPage({
                     icon={History}
                     className="w-full"
                 >
+
                     {/* Filters */}
                     <div className="mb-4">
                         <ReportsFilterBar
@@ -96,15 +122,18 @@ export default function ReportsListPage({
                         />
                     </div>
 
+
                     {/* Table */}
                     <ReportsTable
                         reports={filteredReports}
                         showMember={showMember}
                         getActions={getActions}
                     />
+
                 </Card>
 
             </div>
+
         </div>
     );
 }

@@ -1,32 +1,223 @@
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import {
     FileText,
     Clock3,
     CheckCircle2,
     AlertTriangle,
 } from "lucide-react";
-
-const recentReports = [
-    {
-        id: 1,
-        week: "Sep 08 – Sep 14, 2026",
-        project: "Weekly Report System",
-        status: "Submitted",
-    },
-    {
-        id: 2,
-        week: "Sep 01 – Sep 07, 2026",
-        project: "Client Portal",
-        status: "Approved",
-    },
-    {
-        id: 3,
-        week: "Aug 25 – Aug 31, 2026",
-        project: "Internal Tooling",
-        status: "Needs Correction",
-    },
-];
+import apiFetch from "../../api/apiFetch";
 
 const MemberDashboard = () => {
+    const navigate = useNavigate();
+
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchReports();
+    }, []);
+
+    async function fetchReports() {
+        try {
+            setLoading(true);
+
+            const response = await apiFetch(
+                "/api/reports/my-reports"
+            );
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Failed to load reports"
+                );
+            }
+
+            setReports(data.reports || []);
+
+        } catch (error) {
+            console.error(
+                "Fetch member reports error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to load reports"
+            );
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const totalReports = reports.length;
+
+    const approvedReports = reports.filter(
+        (report) =>
+            report.status === "approved"
+    ).length;
+
+    const needsCorrectionReports =
+        reports.filter(
+            (report) =>
+                report.status ===
+                "needs_correction"
+        ).length;
+
+    const pendingReports = reports.filter(
+        (report) =>
+            report.status === "draft"
+    ).length;
+
+    function getCurrentWeek() {
+        const today = new Date();
+
+        const day = today.getDay();
+
+        const diff =
+            day === 0 ? -6 : 1 - day;
+
+        const weekStart = new Date(today);
+
+        weekStart.setDate(
+            today.getDate() + diff
+        );
+
+        weekStart.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        const weekEnd = new Date(
+            weekStart
+        );
+
+        weekEnd.setDate(
+            weekStart.getDate() + 6
+        );
+
+        weekEnd.setHours(
+            23,
+            59,
+            59,
+            999
+        );
+
+        return {
+            weekStart,
+            weekEnd,
+        };
+    }
+
+    function formatDate(date) {
+        return new Date(
+            date
+        ).toLocaleDateString(
+            undefined,
+            {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            }
+        );
+    }
+
+    const {
+        weekStart,
+        weekEnd,
+    } = getCurrentWeek();
+
+    const currentWeekReport =
+        reports.find((report) => {
+            if (!report.weekStart) {
+                return false;
+            }
+
+            const reportWeekStart =
+                new Date(
+                    report.weekStart
+                );
+
+            reportWeekStart.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return (
+                reportWeekStart.getTime() ===
+                weekStart.getTime()
+            );
+        });
+
+    const recentReports = [...reports]
+        .sort(
+            (a, b) =>
+                new Date(
+                    b.weekStart
+                ) -
+                new Date(
+                    a.weekStart
+                )
+        )
+        .slice(0, 5);
+
+    function getStatusLabel(status) {
+        switch (status) {
+            case "approved":
+                return "Approved";
+
+            case "needs_correction":
+                return "Needs Correction";
+
+            case "submitted":
+                return "Submitted";
+
+            case "draft":
+                return "Draft";
+
+            default:
+                return status || "-";
+        }
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case "approved":
+                return "bg-[#00df82]/10 text-[#008f5a]";
+
+            case "needs_correction":
+                return "bg-red-50 text-red-600";
+
+            case "submitted":
+                return "bg-[#1b496d]/10 text-[#1b496d]";
+
+            case "draft":
+                return "bg-orange-50 text-orange-600";
+
+            default:
+                return "bg-gray-100 text-gray-600";
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <p className="text-sm text-gray-500">
+                    Loading dashboard...
+                </p>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full h-full flex flex-col">
             <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-8">
@@ -45,6 +236,7 @@ const MemberDashboard = () => {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
+                    {/* Total Reports */}
                     <div className="rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
                         <div className="flex items-start justify-between">
                             <div>
@@ -53,11 +245,11 @@ const MemberDashboard = () => {
                                 </p>
 
                                 <h2 className="mt-2 text-2xl font-bold text-[#1b496d]">
-                                    8
+                                    {totalReports}
                                 </h2>
 
                                 <p className="mt-1 text-xs text-gray-400">
-                                    Submitted reports
+                                    Your weekly reports
                                 </p>
                             </div>
 
@@ -67,6 +259,7 @@ const MemberDashboard = () => {
                         </div>
                     </div>
 
+                    {/* Pending */}
                     <div className="rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
                         <div className="flex items-start justify-between">
                             <div>
@@ -75,7 +268,7 @@ const MemberDashboard = () => {
                                 </p>
 
                                 <h2 className="mt-2 text-2xl font-bold text-[#1b496d]">
-                                    1
+                                    {pendingReports}
                                 </h2>
 
                                 <p className="mt-1 text-xs text-gray-400">
@@ -89,6 +282,7 @@ const MemberDashboard = () => {
                         </div>
                     </div>
 
+                    {/* Approved */}
                     <div className="rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
                         <div className="flex items-start justify-between">
                             <div>
@@ -97,7 +291,7 @@ const MemberDashboard = () => {
                                 </p>
 
                                 <h2 className="mt-2 text-2xl font-bold text-[#1b496d]">
-                                    6
+                                    {approvedReports}
                                 </h2>
 
                                 <p className="mt-1 text-xs text-gray-400">
@@ -111,6 +305,7 @@ const MemberDashboard = () => {
                         </div>
                     </div>
 
+                    {/* Needs Correction */}
                     <div className="rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
                         <div className="flex items-start justify-between">
                             <div>
@@ -119,7 +314,7 @@ const MemberDashboard = () => {
                                 </p>
 
                                 <h2 className="mt-2 text-2xl font-bold text-[#1b496d]">
-                                    1
+                                    {needsCorrectionReports}
                                 </h2>
 
                                 <p className="mt-1 text-xs text-gray-400">
@@ -132,24 +327,49 @@ const MemberDashboard = () => {
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 {/* Current Week */}
                 <div className="mt-6 rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
                         <div>
                             <h2 className="text-sm font-semibold text-gray-900">
                                 This Week's Report
                             </h2>
 
                             <p className="mt-1 text-xs text-gray-500">
-                                Sep 08 – Sep 14, 2026
+                                {formatDate(weekStart)}
+                                {" – "}
+                                {formatDate(weekEnd)}
                             </p>
                         </div>
 
-                        <span className="w-fit rounded-full bg-[#1b496d]/10 px-3 py-1.5 text-xs font-semibold text-[#1b496d]">
-                            Submitted
-                        </span>
+                        {currentWeekReport ? (
+                            <span
+                                className={`w-fit rounded-full px-3 py-1.5 text-xs font-semibold ${getStatusClass(
+                                    currentWeekReport.status
+                                )}`}
+                            >
+                                {getStatusLabel(
+                                    currentWeekReport.status
+                                )}
+                            </span>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate(
+                                        "/member-report"
+                                    )
+                                }
+                                className="w-fit rounded-lg bg-[#1b496d] px-4 py-2 text-xs font-medium text-white transition hover:bg-[#153b58]"
+                            >
+                                Create Report
+                            </button>
+                        )}
+
                     </div>
                 </div>
 
@@ -168,8 +388,10 @@ const MemberDashboard = () => {
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
+
                             <thead>
                                 <tr className="border-b border-[#dcdddf] text-left">
+
                                     <th className="px-5 py-3 text-xs font-medium text-gray-500">
                                         Week
                                     </th>
@@ -181,40 +403,67 @@ const MemberDashboard = () => {
                                     <th className="px-5 py-3 text-xs font-medium text-gray-500">
                                         Status
                                     </th>
+
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {recentReports.map((report) => (
-                                    <tr
-                                        key={report.id}
-                                        className="border-b border-gray-100 last:border-b-0"
-                                    >
-                                        <td className="px-5 py-4 text-gray-700">
-                                            {report.week}
-                                        </td>
 
-                                        <td className="px-5 py-4 text-gray-700">
-                                            {report.project}
-                                        </td>
-
-                                        <td className="px-5 py-4">
-                                            <span
-                                                className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                                                    report.status === "Approved"
-                                                        ? "bg-[#00df82]/10 text-[#008f5a]"
-                                                        : report.status ===
-                                                          "Needs Correction"
-                                                        ? "bg-red-50 text-red-600"
-                                                        : "bg-[#1b496d]/10 text-[#1b496d]"
-                                                }`}
+                                {recentReports.length > 0 ? (
+                                    recentReports.map(
+                                        (report) => (
+                                            <tr
+                                                key={
+                                                    report._id
+                                                }
+                                                className="border-b border-gray-100 last:border-b-0"
                                             >
-                                                {report.status}
-                                            </span>
+
+                                                <td className="px-5 py-4 text-gray-700">
+                                                    {formatDate(
+                                                        report.weekStart
+                                                    )}
+                                                    {" – "}
+                                                    {formatDate(
+                                                        report.weekEnd
+                                                    )}
+                                                </td>
+
+                                                <td className="px-5 py-4 text-gray-700">
+                                                    {report.project?.name ||
+                                                        "-"}
+                                                </td>
+
+                                                <td className="px-5 py-4">
+                                                    <span
+                                                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
+                                                            report.status
+                                                        )}`}
+                                                    >
+                                                        {getStatusLabel(
+                                                            report.status
+                                                        )}
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                        )
+                                    )
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="3"
+                                            className="px-5 py-10 text-center"
+                                        >
+                                            <p className="text-sm text-gray-500">
+                                                No reports found.
+                                            </p>
                                         </td>
                                     </tr>
-                                ))}
+                                )}
+
                             </tbody>
+
                         </table>
                     </div>
                 </div>

@@ -1,49 +1,104 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
+import { toast } from "react-toastify";
 import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
 
-// TODO: replace with GET /api/reports?mine=true
-const MOCK_MY_REPORTS = [
-  { id: "1", weekStart: "2026-08-25", weekEnd: "2026-08-31", project: "Client A", status: "approved", updatedAt: "2026-09-01" },
-  { id: "2", weekStart: "2026-09-01", weekEnd: "2026-09-07", project: "R&D", status: "needs_correction", updatedAt: "2026-09-08" },
-  { id: "3", weekStart: "2026-09-08", weekEnd: "2026-09-14", project: "Internal Tooling", status: "submitted", updatedAt: "2026-09-09" },
-  { id: "4", weekStart: "2026-09-15", weekEnd: "2026-09-21", project: "Client A", status: "draft", updatedAt: "2026-09-11" },
+const EDITABLE_STATUSES = [
+    "draft",
+    "needs_correction",
 ];
 
-const EDITABLE_STATUSES = ["draft", "needs_correction"];
-
 export default function MyReportsPage() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  function getActions(report) {
-  const editable = EDITABLE_STATUSES.includes(report.status);
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  const actions = [
-    {
-      label: "View",
-      icon: Eye,
-      onClick: () => navigate(`/member-report/${report.id}`),
-    },
-  ];
+    useEffect(() => {
+        fetchReports();
+    }, []);
 
-  if (editable) {
-    actions.push({
-      label: "Edit",
-      icon: Pencil,
-      onClick: () => navigate(`/member-report/${report.id}/edit`),
-    });
-  }
+    async function fetchReports() {
+        try {
+            const response = await fetch(
+                "http://localhost:8000/api/reports/my-reports",
+                {
+                    credentials: "include",
+                }
+            );
 
-  return actions;
-}
+            const data = await response.json();
 
-  return (
-    <ReportsListPage
-      title="My Reports"
-      description="Your weekly report history and current statuses."
-      reports={MOCK_MY_REPORTS}
-      getActions={getActions}
-      onNewReport={() => navigate("/member-report")}
-    />
-  );
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Failed to load reports"
+                );
+            }
+
+            setReports(data.reports || []);
+
+        } catch (error) {
+            console.error(
+                "Fetch my reports error:",
+                error
+            );
+
+            toast.error(
+                error.message || "Failed to load reports"
+            );
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function getActions(report) {
+        const editable =
+            EDITABLE_STATUSES.includes(report.status);
+
+        const actions = [
+            {
+                label: "View",
+                icon: Eye,
+                onClick: () =>
+                    navigate(
+                        `/member-report/${report._id}`
+                    ),
+            },
+        ];
+
+        if (editable) {
+            actions.push({
+                label: "Edit",
+                icon: Pencil,
+                onClick: () =>
+                    navigate(
+                        `/member-report/${report._id}/edit`
+                    ),
+            });
+        }
+
+        return actions;
+    }
+
+    if (loading) {
+        return (
+            <div className="p-6 text-sm text-gray-500">
+                Loading reports...
+            </div>
+        );
+    }
+
+    return (
+        <ReportsListPage
+            title="My Reports"
+            description="Your weekly report history and current statuses."
+            reports={reports}
+            getActions={getActions}
+            onNewReport={() =>
+                navigate("/member-report")
+            }
+        />
+    );
 }

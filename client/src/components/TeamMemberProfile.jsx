@@ -1,87 +1,104 @@
 import { ArrowLeft, Eye } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-const DUMMY_MEMBERS = {
-    "1": {
-        name: "John Silva",
-        email: "john.silva@gmail.com",
-        role: "Member",
-        totalReports: 12,
-        approved: 8,
-        needsCorrection: 2,
-        submitted: 1,
-        draft: 1,
-    },
-
-    "2": {
-        name: "Sarah Perera",
-        email: "sarah.perera@gmail.com",
-        role: "Member",
-        totalReports: 9,
-        approved: 6,
-        needsCorrection: 1,
-        submitted: 1,
-        draft: 1,
-    },
-
-    "3": {
-        name: "Alex Fernando",
-        email: "alex.fernando@gmail.com",
-        role: "Member",
-        totalReports: 15,
-        approved: 11,
-        needsCorrection: 2,
-        submitted: 1,
-        draft: 1,
-    },
-
-    "4": {
-        name: "Nimal Perera",
-        email: "nimal.perera@gmail.com",
-        role: "Member",
-        totalReports: 7,
-        approved: 5,
-        needsCorrection: 1,
-        submitted: 1,
-        draft: 0,
-    },
-};
-
-const DUMMY_REPORTS = [
-    {
-        id: "report-1",
-        week: "Sep 08 – Sep 14, 2026",
-        project: "Weekly Report System",
-        status: "Approved",
-    },
-
-    {
-        id: "report-2",
-        week: "Sep 01 – Sep 07, 2026",
-        project: "Weekly Report System",
-        status: "Needs Correction",
-    },
-
-    {
-        id: "report-3",
-        week: "Aug 25 – Aug 31, 2026",
-        project: "Client Portal",
-        status: "Approved",
-    },
-
-    {
-        id: "report-4",
-        week: "Aug 18 – Aug 24, 2026",
-        project: "Client Portal",
-        status: "Submitted",
-    },
-];
+import { toast } from "react-toastify";
 
 const TeamMemberProfile = () => {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const member = DUMMY_MEMBERS[id];
+    const [member, setMember] = useState(null);
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchMemberData();
+    }, [id]);
+
+    async function fetchMemberData() {
+        try {
+            setLoading(true);
+
+            // Fetch users
+            const usersResponse = await fetch(
+                "http://localhost:8000/api/auth/users",
+                {
+                    credentials: "include",
+                }
+            );
+
+            const usersData =
+                await usersResponse.json();
+
+            if (!usersResponse.ok) {
+                throw new Error(
+                    usersData.message ||
+                    "Failed to load team member"
+                );
+            }
+
+            const selectedMember =
+                (usersData.users || []).find(
+                    (user) => user._id === id
+                );
+
+            if (!selectedMember) {
+                throw new Error(
+                    "Team member not found"
+                );
+            }
+
+            setMember(selectedMember);
+
+            // Fetch this member's reports
+            const reportsResponse = await fetch(
+                `http://localhost:8000/api/reports?member=${id}`,
+                {
+                    credentials: "include",
+                }
+            );
+
+            const reportsData =
+                await reportsResponse.json();
+
+            if (!reportsResponse.ok) {
+                throw new Error(
+                    reportsData.message ||
+                    "Failed to load reports"
+                );
+            }
+
+            setReports(
+                reportsData.reports || []
+            );
+
+        } catch (error) {
+            console.error(
+                "Fetch team member profile error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to load team member"
+            );
+
+            navigate("/manager-team");
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <p className="text-sm text-gray-500">
+                    Loading team member...
+                </p>
+            </div>
+        );
+    }
 
     if (!member) {
         return (
@@ -93,47 +110,111 @@ const TeamMemberProfile = () => {
         );
     }
 
+    const totalReports = reports.length;
+
+    const approved = reports.filter(
+        (report) =>
+            report.status === "approved"
+    ).length;
+
+    const needsCorrection = reports.filter(
+        (report) =>
+            report.status === "needs_correction"
+    ).length;
+
+    const submitted = reports.filter(
+        (report) =>
+            report.status === "submitted"
+    ).length;
+
+    const draft = reports.filter(
+        (report) =>
+            report.status === "draft"
+    ).length;
+
     const stats = [
         {
             label: "Total Reports",
-            value: member.totalReports,
+            value: totalReports,
         },
-
         {
             label: "Approved",
-            value: member.approved,
+            value: approved,
         },
-
         {
             label: "Needs Correction",
-            value: member.needsCorrection,
+            value: needsCorrection,
         },
-
         {
             label: "Submitted",
-            value: member.submitted,
+            value: submitted,
         },
-
         {
             label: "Draft",
-            value: member.draft,
+            value: draft,
         },
     ];
 
+    const getStatusLabel = (status) => {
+        if (status === "needs_correction") {
+            return "Needs Correction";
+        }
+
+        if (status === "approved") {
+            return "Approved";
+        }
+
+        if (status === "submitted") {
+            return "Submitted";
+        }
+
+        if (status === "draft") {
+            return "Draft";
+        }
+
+        return status;
+    };
+
     const getStatusClass = (status) => {
-        if (status === "Approved") {
+        if (status === "approved") {
             return "bg-[#caf29a]/60 text-[#1b496d]";
         }
 
-        if (status === "Needs Correction") {
+        if (status === "needs_correction") {
             return "bg-red-50 text-red-600";
         }
 
-        if (status === "Submitted") {
+        if (status === "submitted") {
             return "bg-blue-50 text-blue-600";
         }
 
         return "bg-gray-100 text-gray-600";
+    };
+
+    const formatWeek = (
+        weekStart,
+        weekEnd
+    ) => {
+        const options = {
+            month: "short",
+            day: "numeric",
+        };
+
+        const start = new Date(
+            weekStart
+        ).toLocaleDateString(
+            undefined,
+            options
+        );
+
+        const end = new Date(
+            weekEnd
+        ).toLocaleDateString(
+            undefined,
+            options
+        );
+
+        return `${start} – ${end}`;
     };
 
     return (
@@ -144,7 +225,11 @@ const TeamMemberProfile = () => {
                 <div className="mb-6">
                     <button
                         type="button"
-                        onClick={() => navigate("/manager-team")}
+                        onClick={() =>
+                            navigate(
+                                "/manager-team"
+                            )
+                        }
                         className="mb-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#1b496d]"
                     >
                         <ArrowLeft size={16} />
@@ -156,11 +241,15 @@ const TeamMemberProfile = () => {
                     </h1>
 
                     <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
-                        <span>{member.email}</span>
+                        <span>
+                            {member.email}
+                        </span>
 
                         <span>•</span>
 
-                        <span>{member.role}</span>
+                        <span>
+                            {member.role}
+                        </span>
                     </div>
                 </div>
 
@@ -223,51 +312,79 @@ const TeamMemberProfile = () => {
                             </thead>
 
                             <tbody>
-                                {DUMMY_REPORTS.map((report) => (
-                                    <tr
-                                        key={report.id}
-                                        className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                                    >
+                                {reports.length > 0 ? (
+                                    reports.map(
+                                        (report) => {
 
-                                        {/* Week */}
-                                        <td className="px-5 py-4 text-gray-700">
-                                            {report.week}
+                                            const projectName =
+                                                typeof report.project === "object"
+                                                    ? report.project?.name
+                                                    : report.project;
+
+                                            return (
+                                                <tr
+                                                    key={report._id}
+                                                    className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+                                                >
+
+                                                    {/* Week */}
+                                                    <td className="px-5 py-4 text-gray-700">
+                                                        {formatWeek(
+                                                            report.weekStart,
+                                                            report.weekEnd
+                                                        )}
+                                                    </td>
+
+                                                    {/* Project */}
+                                                    <td className="px-5 py-4 text-gray-700">
+                                                        {projectName || "-"}
+                                                    </td>
+
+                                                    {/* Status */}
+                                                    <td className="px-5 py-4">
+                                                        <span
+                                                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
+                                                                report.status
+                                                            )}`}
+                                                        >
+                                                            {getStatusLabel(
+                                                                report.status
+                                                            )}
+                                                        </span>
+                                                    </td>
+
+                                                    {/* Action */}
+                                                    <td className="px-5 py-4 text-right">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/manager-report/${report._id}`
+                                                                )
+                                                            }
+                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#dcdddf] px-3 py-2 text-xs font-medium text-[#1b496d] hover:bg-[#1b496d]/5"
+                                                        >
+                                                            <Eye
+                                                                size={15}
+                                                            />
+                                                            View
+                                                        </button>
+                                                    </td>
+
+                                                </tr>
+                                            );
+                                        }
+                                    )
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="4"
+                                            className="px-5 py-10 text-center text-sm text-gray-500"
+                                        >
+                                            No reports found for this team member.
                                         </td>
-
-                                        {/* Project */}
-                                        <td className="px-5 py-4 text-gray-700">
-                                            {report.project}
-                                        </td>
-
-                                        {/* Status */}
-                                        <td className="px-5 py-4">
-                                            <span
-                                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
-                                                    report.status
-                                                )}`}
-                                            >
-                                                {report.status}
-                                            </span>
-                                        </td>
-
-                                        {/* Action */}
-                                        <td className="px-5 py-4 text-right">
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/manager-report/${report.id}`
-                                                    )
-                                                }
-                                                className="inline-flex items-center gap-1.5 rounded-lg border border-[#dcdddf] px-3 py-2 text-xs font-medium text-[#1b496d] hover:bg-[#1b496d]/5"
-                                            >
-                                                <Eye size={15} />
-                                                View
-                                            </button>
-                                        </td>
-
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
 
                         </table>

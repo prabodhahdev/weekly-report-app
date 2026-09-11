@@ -1,7 +1,6 @@
 const Report = require('../models/Report')
 const ReportVersion = require('../models/ReportVersion')
 const Project = require('../models/Project')
-const User = require('../models/User')
 
 
 // Create a new report
@@ -44,7 +43,7 @@ const createReport = async (req, res) => {
         }
 
         const existingReport = await Report.findOne({
-            member: req.user._id,
+            member: req.user.userId,
             weekStart: startDate
         })
 
@@ -55,7 +54,7 @@ const createReport = async (req, res) => {
         }
 
         const report = new Report({
-            member: req.user._id,
+            member: req.user.userId,
             weekStart: startDate,
             weekEnd,
             project,
@@ -105,7 +104,7 @@ const createReport = async (req, res) => {
 const getMyReports = async (req, res) => {
     try {
         const reports = await Report.find({
-            member: req.user._id
+            member: req.user.userId
         })
             .populate('project', 'name')
             .populate('currentVersion')
@@ -132,7 +131,7 @@ const getMyReport = async (req, res) => {
 
         const report = await Report.findOne({
             _id: id,
-            member: req.user._id
+            member: req.user.userId
         })
             .populate('member', 'name email')
             .populate('project', 'name description')
@@ -184,7 +183,7 @@ const updateReport = async (req, res) => {
 
         const report = await Report.findOne({
             _id: id,
-            member: req.user._id
+            member: req.user.userId
         })
 
         if (!report) {
@@ -335,7 +334,7 @@ const submitReport = async (req, res) => {
 
         const report = await Report.findOne({
             _id: id,
-            member: req.user._id
+            member: req.user.userId
         })
 
         if (!report) {
@@ -536,7 +535,7 @@ const reviewReport = async (req, res) => {
                 ? comment.trim()
                 : ''
         version.reviewedAt = new Date()
-        version.reviewedBy = req.user._id
+        version.reviewedBy = req.user.userId
 
         await version.save()
 

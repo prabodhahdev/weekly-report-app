@@ -1,47 +1,122 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Check, MessageSquare } from "lucide-react";
+import { toast } from "react-toastify";
 
 import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
-
-const MOCK_TEAM_REPORTS = [
-    {
-        id: "1",
-        memberName: "John Silva",
-        weekStart: "2026-08-25",
-        weekEnd: "2026-08-31",
-        project: "Client A",
-        status: "submitted",
-        updatedAt: "2026-09-01",
-    },
-    {
-        id: "2",
-        memberName: "Sarah Perera",
-        weekStart: "2026-09-01",
-        weekEnd: "2026-09-07",
-        project: "R&D",
-        status: "needs_correction",
-        updatedAt: "2026-09-08",
-    },
-    {
-        id: "3",
-        memberName: "Alex Fernando",
-        weekStart: "2026-09-08",
-        weekEnd: "2026-09-14",
-        project: "Internal Tooling",
-        status: "approved",
-        updatedAt: "2026-09-09",
-    },
-];
 
 export default function ReportsPage() {
     const navigate = useNavigate();
 
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchReports();
+    }, []);
+
+    async function fetchReports() {
+        try {
+            setLoading(true);
+
+            const response = await fetch(
+                "http://localhost:8000/api/reports",
+                {
+                    credentials: "include",
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Failed to load team reports"
+                );
+            }
+
+            setReports(data.reports || []);
+
+        } catch (error) {
+            console.error(
+                "Fetch team reports error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to load team reports"
+            );
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleReview(
+        reportId,
+        action,
+        comment = ""
+    ) {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/api/reports/${reportId}/review`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        action,
+                        comment,
+                    }),
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Failed to review report"
+                );
+            }
+
+            toast.success(
+                data.message ||
+                "Report reviewed successfully"
+            );
+
+            fetchReports();
+
+        } catch (error) {
+            console.error(
+                "Review report error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to review report"
+            );
+        }
+    }
+
     function getActions(report) {
+        const reportId =
+            report._id || report.id;
+
         const actions = [
             {
                 label: "View",
                 icon: Eye,
-                onClick: () => navigate(`/manager-report/${report.id}`),
+                onClick: () =>
+                    navigate(
+                        `/manager-report/${reportId}`
+                    ),
             },
         ];
 
@@ -50,18 +125,20 @@ export default function ReportsPage() {
                 {
                     label: "Approve",
                     icon: Check,
-                    onClick: () => {
-                        // TODO: approve report
-                        console.log("Approve:", report.id);
-                    },
+                    onClick: () =>
+                        handleReview(
+                            reportId,
+                            "approved",
+                            ""
+                        ),
                 },
                 {
                     label: "Request Changes",
                     icon: MessageSquare,
-                    onClick: () => {
-                        // TODO: open request changes modal
-                        console.log("Request changes:", report.id);
-                    },
+                    onClick: () =>
+                        navigate(
+                            `/manager-report/${reportId}`
+                        ),
                 }
             );
         }
@@ -69,11 +146,19 @@ export default function ReportsPage() {
         return actions;
     }
 
+    if (loading) {
+        return (
+            <div className="p-6 text-sm text-gray-500">
+                Loading team reports...
+            </div>
+        );
+    }
+
     return (
         <ReportsListPage
             title="Team Reports"
             description="View and review weekly reports submitted by your team."
-            reports={MOCK_TEAM_REPORTS}
+            reports={reports}
             showMember={true}
             getActions={getActions}
             cardTitle="Team reports"

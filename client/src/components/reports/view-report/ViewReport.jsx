@@ -4,7 +4,6 @@ import WeeklyHighlights from "./WeeklyHighlights";
 import CompletedTasks from "./CompletedTasks";
 import NextWeekTasks from "./NextWeekTasks";
 import BlockersSection from "./BlockersSection";
-import ChallengesSection from "./ChallengesSection";
 import HoursBreakdown from "./HoursBreakdown";
 import NotesSection from "./NotesSection";
 import ManagerFeedback from "./ManagerFeedback";
@@ -25,35 +24,31 @@ const ViewReport = ({ report }) => {
             <ReportStatistics report={report} />
 
             <WeeklyHighlights
-                highlights={report.highlights || []}
+                highlights={report.achievements || []}
             />
 
             <CompletedTasks
-                tasks={report.completedTasks || []}
+                tasks={report.tasksCompleted || []}
             />
 
             <NextWeekTasks
-                tasks={report.nextWeekTasks || []}
+                tasks={report.tasksPlanned || []}
             />
 
             <BlockersSection
                 blockers={report.blockers || []}
             />
 
-            <ChallengesSection
-                challenges={report.challenges || []}
-            />
-
             <HoursBreakdown
-                hours={report.hoursBreakdown || []}
+                hours={report.hours || {}}
             />
 
             <NotesSection
-                notes={report.notes}
+                notes={report.notes || ""}
             />
 
             <ManagerFeedback
-                feedback={report.managerFeedback}
+                feedback={report.managerComment || ""}
             />
         </div>
     );

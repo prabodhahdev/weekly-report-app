@@ -1,33 +1,112 @@
-
 import { Eye } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const DUMMY_SUBMITTED_REPORTS = [
-    {
-        id: "report-1",
-        memberName: "John Silva",
-        week: "Sep 08 – Sep 14, 2026",
-        project: "Weekly Report System",
-        submittedAt: "Sep 11, 2026",
-    },
-    {
-        id: "report-5",
-        memberName: "Sarah Perera",
-        week: "Sep 08 – Sep 14, 2026",
-        project: "Client Portal",
-        submittedAt: "Sep 11, 2026",
-    },
-    {
-        id: "report-6",
-        memberName: "Alex Fernando",
-        week: "Sep 08 – Sep 14, 2026",
-        project: "Internal Tooling",
-        submittedAt: "Sep 10, 2026",
-    },
-];
+import { toast } from "react-toastify";
 
 const ReviewQueuePage = () => {
     const navigate = useNavigate();
+
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchSubmittedReports();
+    }, []);
+
+    async function fetchSubmittedReports() {
+        try {
+            setLoading(true);
+
+            const response = await fetch(
+                "http://localhost:8000/api/reports?status=submitted",
+                {
+                    credentials: "include",
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Failed to load submitted reports"
+                );
+            }
+
+            setReports(data.reports || []);
+
+        } catch (error) {
+            console.error(
+                "Fetch submitted reports error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to load submitted reports"
+            );
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function formatWeek(
+        weekStart,
+        weekEnd
+    ) {
+        const options = {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        };
+
+        const start = new Date(
+            weekStart
+        ).toLocaleDateString(
+            undefined,
+            options
+        );
+
+        const end = new Date(
+            weekEnd
+        ).toLocaleDateString(
+            undefined,
+            options
+        );
+
+        return `${start} – ${end}`;
+    }
+
+    function formatSubmittedAt(report) {
+        const submittedAt =
+            report.currentVersion?.submittedAt;
+
+        if (!submittedAt) {
+            return "-";
+        }
+
+        return new Date(
+            submittedAt
+        ).toLocaleDateString(
+            undefined,
+            {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            }
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <p className="text-sm text-gray-500">
+                    Loading review queue...
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -89,48 +168,75 @@ const ReviewQueuePage = () => {
                             </thead>
 
                             <tbody>
-                                {DUMMY_SUBMITTED_REPORTS.length > 0 ? (
-                                    DUMMY_SUBMITTED_REPORTS.map((report) => (
-                                        <tr
-                                            key={report.id}
-                                            className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                                        >
+                                {reports.length > 0 ? (
+                                    reports.map(
+                                        (report) => {
 
-                                            <td className="px-5 py-4">
-                                                <p className="font-medium text-gray-900">
-                                                    {report.memberName}
-                                                </p>
-                                            </td>
+                                            const memberName =
+                                                typeof report.member === "object"
+                                                    ? report.member?.name
+                                                    : "-";
 
-                                            <td className="px-5 py-4 text-gray-700">
-                                                {report.week}
-                                            </td>
+                                            const projectName =
+                                                typeof report.project === "object"
+                                                    ? report.project?.name
+                                                    : report.project;
 
-                                            <td className="px-5 py-4 text-gray-700">
-                                                {report.project}
-                                            </td>
-
-                                            <td className="px-5 py-4 text-gray-600">
-                                                {report.submittedAt}
-                                            </td>
-
-                                            <td className="px-5 py-4 text-right">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/manager-report/${report.id}`
-                                                        )
-                                                    }
-                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#1b496d] px-3 py-2 text-xs font-medium text-white transition hover:bg-[#153b58]"
+                                            return (
+                                                <tr
+                                                    key={report._id}
+                                                    className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                                                 >
-                                                    <Eye size={15} />
-                                                    Review
-                                                </button>
-                                            </td>
 
-                                        </tr>
-                                    ))
+                                                    {/* Team Member */}
+                                                    <td className="px-5 py-4">
+                                                        <p className="font-medium text-gray-900">
+                                                            {memberName}
+                                                        </p>
+                                                    </td>
+
+                                                    {/* Week */}
+                                                    <td className="px-5 py-4 text-gray-700">
+                                                        {formatWeek(
+                                                            report.weekStart,
+                                                            report.weekEnd
+                                                        )}
+                                                    </td>
+
+                                                    {/* Project */}
+                                                    <td className="px-5 py-4 text-gray-700">
+                                                        {projectName || "-"}
+                                                    </td>
+
+                                                    {/* Submitted */}
+                                                    <td className="px-5 py-4 text-gray-600">
+                                                        {formatSubmittedAt(
+                                                            report
+                                                        )}
+                                                    </td>
+
+                                                    {/* Action */}
+                                                    <td className="px-5 py-4 text-right">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/manager-report/${report._id}`
+                                                                )
+                                                            }
+                                                            className="inline-flex items-center gap-1.5 rounded-lg bg-[#1b496d] px-3 py-2 text-xs font-medium text-white transition hover:bg-[#153b58]"
+                                                        >
+                                                            <Eye
+                                                                size={15}
+                                                            />
+                                                            Review
+                                                        </button>
+                                                    </td>
+
+                                                </tr>
+                                            );
+                                        }
+                                    )
                                 ) : (
                                     <tr>
                                         <td
@@ -151,6 +257,7 @@ const ReviewQueuePage = () => {
 
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -158,5 +265,3 @@ const ReviewQueuePage = () => {
 };
 
 export default ReviewQueuePage;
-
-

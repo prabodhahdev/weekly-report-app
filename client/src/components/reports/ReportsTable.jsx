@@ -4,10 +4,18 @@ import { MoreVertical } from "lucide-react";
 import StatusBanner from "./ReportStatusBadge.jsx";
 
 function formatRange(weekStart, weekEnd) {
-    const opts = { month: "short", day: "numeric" };
+    const opts = {
+        month: "short",
+        day: "numeric",
+    };
 
-    const start = new Date(weekStart).toLocaleDateString(undefined, opts);
-    const end = new Date(weekEnd).toLocaleDateString(undefined, opts);
+    const start = new Date(
+        weekStart
+    ).toLocaleDateString(undefined, opts);
+
+    const end = new Date(
+        weekEnd
+    ).toLocaleDateString(undefined, opts);
 
     return `${start} – ${end}`;
 }
@@ -31,7 +39,10 @@ export default function ReportsTable({
             }
         }
 
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener(
+            "mousedown",
+            handleClickOutside
+        );
 
         return () => {
             document.removeEventListener(
@@ -51,9 +62,12 @@ export default function ReportsTable({
 
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
+
             <table className="w-full text-sm">
+
                 <thead>
                     <tr className="bg-[#1b496d]/5 text-left text-xs font-medium text-[#1b496d]">
+
                         {showMember && (
                             <th className="p-3">
                                 Member
@@ -79,28 +93,50 @@ export default function ReportsTable({
                         <th className="p-3 w-16 text-center">
                             Actions
                         </th>
+
                     </tr>
                 </thead>
 
+
                 <tbody>
+
                     {reports.map((r, i) => {
-                        const actions = getActions(r);
-                        const isOpen = openMenu === r.id;
+
+                        const actions =
+                            getActions(r);
+
+                        const reportId =
+                            r._id || r.id;
+
+                        const isOpen =
+                            openMenu === reportId;
+
+                        const projectName =
+                            typeof r.project === "object"
+                                ? r.project?.name
+                                : r.project;
+
+                        const memberName =
+                            typeof r.member === "object"
+                                ? r.member?.name
+                                : r.memberName;
 
                         return (
                             <tr
-                                key={r.id}
+                                key={reportId}
                                 className={
                                     i % 2
                                         ? "bg-gray-50/50"
                                         : "bg-white"
                                 }
                             >
+
                                 {showMember && (
                                     <td className="p-3 font-medium text-gray-900">
-                                        {r.memberName}
+                                        {memberName || "-"}
                                     </td>
                                 )}
+
 
                                 <td className="p-3 font-medium text-gray-900">
                                     {formatRange(
@@ -109,9 +145,11 @@ export default function ReportsTable({
                                     )}
                                 </td>
 
+
                                 <td className="p-3 text-gray-600">
-                                    {r.project}
+                                    {projectName || "-"}
                                 </td>
+
 
                                 <td className="p-3">
                                     <StatusBanner
@@ -119,13 +157,18 @@ export default function ReportsTable({
                                     />
                                 </td>
 
+
                                 <td className="p-3 text-gray-500">
-                                    {new Date(
-                                        r.updatedAt
-                                    ).toLocaleDateString()}
+                                    {r.updatedAt
+                                        ? new Date(
+                                              r.updatedAt
+                                          ).toLocaleDateString()
+                                        : "-"}
                                 </td>
 
+
                                 <td className="p-3">
+
                                     <div
                                         className="relative flex justify-center"
                                         ref={
@@ -134,13 +177,14 @@ export default function ReportsTable({
                                                 : null
                                         }
                                     >
+
                                         <button
                                             type="button"
                                             onClick={() =>
                                                 setOpenMenu(
                                                     isOpen
                                                         ? null
-                                                        : r.id
+                                                        : reportId
                                                 )
                                             }
                                             className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-[#1b496d] transition-colors"
@@ -151,10 +195,13 @@ export default function ReportsTable({
                                             />
                                         </button>
 
+
                                         {isOpen && (
                                             <div className="absolute right-0 top-9 z-20 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+
                                                 {actions.map(
                                                     (action) => {
+
                                                         const Icon =
                                                             action.icon;
 
@@ -168,6 +215,7 @@ export default function ReportsTable({
                                                                     setOpenMenu(
                                                                         null
                                                                     );
+
                                                                     action.onClick();
                                                                 }}
                                                                 className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-[#1b496d]"
@@ -188,15 +236,22 @@ export default function ReportsTable({
                                                         );
                                                     }
                                                 )}
+
                                             </div>
                                         )}
+
                                     </div>
+
                                 </td>
+
                             </tr>
                         );
                     })}
+
                 </tbody>
+
             </table>
+
         </div>
     );
 }
