@@ -312,11 +312,154 @@ const getProfile = async (req, res) => {
         });
     }
 };
+
+
+// Get all users
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+            .select('_id name email role')
+            .sort({ name: 1 })
+
+        res.status(200).json({
+            users
+        })
+
+    } catch (error) {
+        console.error('Get users error:', error)
+
+        res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+// Create user by manager
+const createUser = async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body
+
+        const user = await User.findOne({ email })
+
+        if (user) {
+            return res.status(400).json({
+                message: "User already exists"
+            })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role
+        })
+
+        await newUser.save()
+
+        return res.status(201).json({
+            message: "User created successfully"
+        })
+
+    } catch (error) {
+        console.error("Create user error:", error)
+
+        return res.status(500).json({
+            message: "Server error"
+        })
+    }
+}
+
+// Update user role
+const updateUserRole = async (req, res) => {
+    try {
+        const { role } = req.body
+
+        if (!['member', 'manager'].includes(role)) {
+            return res.status(400).json({
+                message: "Invalid role"
+            })
+        }
+
+        const user = await User.findById(req.params.id)
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        user.role = role
+
+        await user.save()
+
+        return res.status(200).json({
+            message: "User role updated successfully"
+        })
+
+    } catch (error) {
+        console.error("Update user role error:", error)
+
+        return res.status(500).json({
+            message: "Server error"
+        })
+    }
+}
+
+
+// Delete user
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        // Prevent manager from removing themselves
+        if (user._id.toString() === req.user.userId.toString()) {
+            return res.status(400).json({
+                message: "You cannot remove yourself"
+            })
+        }
+
+        // Check if user is assigned to any project
+        const assignedProject = await Project.findOne({
+            members: req.params.id
+        })
+
+        if (assignedProject) {
+            return res.status(400).json({
+                message: "Cannot remove user. User is assigned to one or more projects."
+            })
+        }
+
+        await user.deleteOne()
+
+        return res.status(200).json({
+            message: "User removed successfully"
+        })
+
+    } catch (error) {
+        console.error("Delete user error:", error)
+
+        return res.status(500).json({
+            message: "User is assigned to projects. Cannot remove user."
+        })
+    }
+}
 module.exports = {
     register,
     login,
     refresh,    
     logout,
-    getProfile
+    getProfile,
+    getUsers,
+    createUser,
+    updateUserRole,
+    deleteUser
 
 }

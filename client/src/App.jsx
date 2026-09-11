@@ -13,6 +13,17 @@ import MyReportsPage from './pages/member/MyReportsPage'
 import EditMyReportPage from './pages/member/EditReportPage'
 import ViewMyReportPage from './pages/member/ViewReportPage'
 import ProfilePage from './pages/ProfilePage'
+import ReportsPage from './pages/manager/ReportsPage'
+import ReviewQueuePage from './pages/manager/ReviewQueuePage'
+import TeamMembersPage from './pages/manager/TeamMembersPage'
+import UserManagement from './pages/manager/user/UserManagement'
+import ManagerProjects from './pages/manager/projects/ManagerProjects'
+import AddProject from './pages/manager/projects/AddProject'
+import ViewProject from './pages/manager/projects/ViewProject '
+import EditProject from './pages/manager/projects/EditProject '
+import AddUser from './pages/manager/user/AddUser'
+import TeamMemberProfile from './components/TeamMemberProfile'
+import ManagerViewReport from './pages/manager/ManagerViewReport'
 
 function App() {
   return (
@@ -40,17 +51,31 @@ function App() {
               element={<ViewMyReportPage />}
             />
             <Route path="/member-reports" element={<MyReportsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
 
 
-// Manager routes
+  // Manager routes
         <Route element={<ProtectedRoute allowedRole="manager" />}>
           <Route element={<AppLayout />}>
             <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+            <Route path="/manager-reports" element={<ReportsPage />} />
+            <Route path="/manager-review" element={<ReviewQueuePage />} />
+            <Route path="/manager-team" element={<TeamMembersPage />} />
+            <Route path="/manager-users" element={<UserManagement/>} />
+            <Route path="/manager-projects" element={<ManagerProjects />} />
+            <Route path="/manager-projects/new" element={<AddProject />} />
+            <Route path="/manager-projects/:id" element={<ViewProject />} />
+            <Route path="/manager-projects/:id/edit" element={<EditProject />} />
+            <Route path="/manager-users/new" element={<AddUser />} />
+            <Route path="/manager-team/:id" element={<TeamMemberProfile />} />
+            <Route path="/manager-report/:id" element={<ManagerViewReport />} />
+          </Route>
+        </Route>
+        {/* Common authenticated route */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
             <Route path="/profile" element={<ProfilePage />} />
-
           </Route>
         </Route>
 
