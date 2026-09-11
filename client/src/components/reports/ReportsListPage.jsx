@@ -12,7 +12,7 @@ export default function ReportsListPage({
   reports,
   showMember = false,
   members,
-  getAction,
+  getActions,
   onNewReport,
 }) {
   const [filters, setFilters] = useState({ project: "", status: "", from: "", to: "", member: "" });
@@ -53,7 +53,7 @@ export default function ReportsListPage({
           <div className="mb-4">
             <ReportsFilterBar filters={filters} onChange={setFilters} members={members} />
           </div>
-          <ReportsTable reports={filteredReports} showMember={showMember} getAction={getAction} />
+          <ReportsTable reports={filteredReports} showMember={showMember} getActions={getActions} />
         </Card>
       </div>
     </div>

@@ -19,7 +19,7 @@ export default function Sidebar({ isOpen, onClose }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col p-4
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#1b496d] border-r border-[#1b496d] flex flex-col p-4
         transform transition-transform duration-200 ease-in-out
         md:static md:translate-x-0 md:z-auto
         ${isOpen ? "translate-x-0" : "-translate-x-full"}`}

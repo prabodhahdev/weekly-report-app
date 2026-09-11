@@ -1,5 +1,5 @@
 const express = require('express')
-const {register,login , refresh, logout} = require('../controllers/authController')
+const {register,login , refresh, logout, getProfile} = require('../controllers/authController')
 const registerValidator = require('../middlewares/validators/authValidator')
 const authMiddleware = require('../middlewares/authMiddleware')
 
@@ -10,11 +10,6 @@ router.post('/login', login)
 router.get('/refresh', refresh)
 router.post('/logout', logout )
 
-router.get('/profile', authMiddleware, (req, res) => {
-    res.json({
-        msg: "You are authenticated",
-        user: req.user
-    })
-})
+router.get('/profile', authMiddleware,getProfile)
 
 module.exports = router

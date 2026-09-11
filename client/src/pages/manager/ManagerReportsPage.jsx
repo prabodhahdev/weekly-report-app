@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Eye, ClipboardCheck } from "lucide-react";
-import ReportsListPage from "../components/reports/ReportsListPage.jsx";
+import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
 
 // TODO: replace with GET /api/reports (manager sees the whole team)
 const MOCK_TEAM_REPORTS = [

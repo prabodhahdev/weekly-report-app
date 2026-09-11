@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
-import ReportsListPage from "../components/reports/ReportsListPage.jsx";
+import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
 
 // TODO: replace with GET /api/reports?mine=true
 const MOCK_MY_REPORTS = [
@@ -15,21 +15,34 @@ const EDITABLE_STATUSES = ["draft", "needs_correction"];
 export default function MyReportsPage() {
   const navigate = useNavigate();
 
-  function getAction(report) {
-    const editable = EDITABLE_STATUSES.includes(report.status);
-    return {
-      label: editable ? "Edit" : "View",
-      icon: editable ? Pencil : Eye,
+  function getActions(report) {
+  const editable = EDITABLE_STATUSES.includes(report.status);
+
+  const actions = [
+    {
+      label: "View",
+      icon: Eye,
       onClick: () => navigate(`/member-report/${report.id}`),
-    };
+    },
+  ];
+
+  if (editable) {
+    actions.push({
+      label: "Edit",
+      icon: Pencil,
+      onClick: () => navigate(`/member-report/${report.id}/edit`),
+    });
   }
+
+  return actions;
+}
 
   return (
     <ReportsListPage
       title="My Reports"
       description="Your weekly report history and current statuses."
       reports={MOCK_MY_REPORTS}
-      getAction={getAction}
+      getActions={getActions}
       onNewReport={() => navigate("/member-report")}
     />
   );

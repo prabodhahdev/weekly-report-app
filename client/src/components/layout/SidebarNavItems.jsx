@@ -6,10 +6,10 @@ export default function SidebarNavItem({ label, path, icon: Icon, onClick }) {
       to={path}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+        `flex items-center gap-3 px-3 py-3 rounded-md text-sm transition-colors ${
           isActive
-            ? "bg-gradient-to-br from-purple-600 via-indigo-400 to-indigo-400 text-white font-medium shadow-sm"
-            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+            ? "bg-[#486d8a] text-[#fcfeff] font-medium shadow-sm"
+            : "text-[#fcfeff] hover:bg-[#487496]"
         }`
       }
     >
