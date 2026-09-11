@@ -5,6 +5,7 @@ const express = require('express')
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const projectRoutes = require('./routes/projectRoutes')
+const reportRoutes = require('./routes/reportRoutes')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
@@ -28,6 +29,7 @@ app.get('/',(req,res)=>{
 })
 app.use('/api/auth', authRoutes)
 app.use('/api/projects', projectRoutes)
+app.use('/api/reports', reportRoutes)
 
 //Start the server
 const port = process.env.PORT
