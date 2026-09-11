@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react'
 import refreshApi from '../api/refreshApi'
 
@@ -10,7 +11,9 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
+
             try {
+
                 let response = await fetch(
                     'http://localhost:8000/api/auth/profile',
                     {
@@ -18,23 +21,23 @@ export const AuthProvider = ({ children }) => {
                     }
                 )
 
-            //refresh token if the access token is expired
+                // Refresh token if the access token is expired
+                if (response.status === 401) {
 
-                   if (response.status === 401) {
-            const refreshed = await refreshApi()
+                    const refreshed = await refreshApi()
 
-            if (!refreshed) {
-                setUser(null)
-                return
-            }
+                    if (!refreshed) {
+                        setUser(null)
+                        return
+                    }
 
-             response = await fetch(
-                'http://localhost:8000/api/auth/profile',
-                {
-                    credentials: 'include'
+                    response = await fetch(
+                        'http://localhost:8000/api/auth/profile',
+                        {
+                            credentials: 'include'
+                        }
+                    )
                 }
-            )
-        }
 
                 if (!response.ok) {
                     setUser(null)
@@ -42,30 +45,70 @@ export const AuthProvider = ({ children }) => {
                 }
 
                 const data = await response.json()
+
                 setUser(data.user)
 
             } catch (error) {
+
                 console.error('Auth check error:', error)
+
                 setUser(null)
+
             } finally {
+
                 setLoading(false)
+
             }
         }
 
         checkAuth()
+
     }, [])
+
+    const login = (userData) => {
+    setUser(userData)
+}
+
+    // Logout user
+    const logout = async () => {
+
+        try {
+
+            await fetch(
+                'http://localhost:8000/api/auth/logout',
+                {
+                    method: 'POST',
+                    credentials: 'include'
+                }
+            )
+
+        } catch (error) {
+
+            console.error('Logout error:', error)
+
+        } finally {
+
+            // Remove user from React state
+            setUser(null)
+
+        }
+    }
+
 
     return (
         <AuthContext.Provider
             value={{
                 user,
-                loading
+                login,
+                loading,
+                logout
             }}
         >
             {children}
         </AuthContext.Provider>
     )
 }
+
 
 export const useAuth = () => {
     return useContext(AuthContext)

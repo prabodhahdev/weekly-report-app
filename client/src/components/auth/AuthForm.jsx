@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
+import { useAuth } from '../../context/AuthContext'
 
 const AuthForm = ({ mode }) => {
     const isLogin = mode === 'login'
     const navigate = useNavigate()
+    const { login } = useAuth()
 
     const [formData, setFormData] = useState({
         name: '',
@@ -61,6 +63,8 @@ const AuthForm = ({ mode }) => {
             toast.success(result.msg)
 
             if (isLogin) {
+                login(result.user)
+
                 if(result.user.role === 'manager') {
                     navigate('/manager-dashboard')
                 }
