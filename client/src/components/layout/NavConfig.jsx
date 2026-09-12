@@ -6,6 +6,7 @@ import {
   FolderKanban,
   Users,
   ClipboardCheck,
+  Summary,
 } from "lucide-react";
 
 const COMMON_ITEMS = [
@@ -22,6 +23,7 @@ export const MEMBER_NAV_ITEMS = [
 export const MANAGER_NAV_ITEMS = [
   { label: "Dashboard", path: "/manager-dashboard", icon: LayoutDashboard },
   { label: "Reports", path: "/manager-reports", icon: History },
+  { label: "Weekly Team Summery",path:"/manager-team-summery",icon:Summary},
   { label: "Review Queue", path: "/manager-review", icon: ClipboardCheck },
   { label: "Team Members", path: "/manager-team", icon: Users },
   { label: "Projects", path: "/manager-projects", icon: FolderKanban },

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
 import apiFetch from '../../api/apiFetch'
+import logo from '../../../public/logo.png'
 
 const AuthForm = ({ mode }) => {
     const isLogin = mode === 'login'
@@ -54,8 +55,6 @@ const AuthForm = ({ mode }) => {
             })
 
             const result = await response.json()
-            console.log("LOGIN RESULT:", result);
-console.log("LOGIN USER:", result.user);
 
             if (!response.ok) {
                 toast.error(result.errors ? result.errors[0].msg : result.msg)
@@ -91,8 +90,12 @@ console.log("LOGIN USER:", result.user);
 
             {/* Header */}
             <div className="mb-8 text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-xl font-bold text-white shadow-sm">
-                    WR
+                <div className="mb-5 flex justify-center">
+                    <img
+                        src={logo}
+                        alt="ReportMe"
+                        className="h-16 w-16 object-contain"
+                    />
                 </div>
 
                 <h1 className="text-2xl font-bold tracking-tight text-[#1b496d]">

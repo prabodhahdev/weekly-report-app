@@ -6,6 +6,7 @@ import ViewReport from "../../components/reports/view-report/ViewReport";
 import VersionHistory from "../../components/reports/view-report/VersionHistory";
 import ManagerReviewActions from "../../components/reports/review/ManagerReviewActions";
 import apiFetch from "../../api/apiFetch";
+import { ArrowLeft } from "lucide-react";
 
 const ManagerViewReport = () => {
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ const ManagerViewReport = () => {
             );
 
             const data = await response.json();
-     
+
             if (!response.ok) {
                 throw new Error(
                     data.message ||
@@ -140,6 +141,14 @@ const ManagerViewReport = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+            <button
+                type="button"
+                onClick={() => navigate("/manager-reports")}
+                className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#1b496dba] px-2 py-1 text-sm text-white cursor-pointer hover:bg-[#1b496d] transition"
+            >
+                <ArrowLeft size={16} />
+                Back
+            </button>
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
 
                 {/* Report */}

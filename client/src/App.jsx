@@ -24,6 +24,7 @@ import EditProject from './pages/manager/projects/EditProject '
 import AddUser from './pages/manager/user/AddUser'
 import TeamMemberProfile from './components/TeamMemberProfile'
 import ManagerViewReport from './pages/manager/ManagerViewReport'
+import ManagerWeeklySummery from './pages/manager/ManagerWeeklySummery'
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
             <Route path="/manager-users/new" element={<AddUser />} />
             <Route path="/manager-team/:id" element={<TeamMemberProfile />} />
             <Route path="/manager-report/:id" element={<ManagerViewReport />} />
+            <Route path="/manager-team-summery" element={<ManagerWeeklySummery/>}/>
           </Route>
         </Route>
         {/* Common authenticated route */}
