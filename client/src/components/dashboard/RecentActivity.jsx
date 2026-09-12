@@ -109,27 +109,24 @@ const RecentActivity = ({ reports = [] }) => {
         }
 
         if (minutes < 60) {
-            return `${minutes} ${
-                minutes === 1
-                    ? "minute"
-                    : "minutes"
-            } ago`;
+            return `${minutes} ${minutes === 1
+                ? "minute"
+                : "minutes"
+                } ago`;
         }
 
         if (hours < 24) {
-            return `${hours} ${
-                hours === 1
-                    ? "hour"
-                    : "hours"
-            } ago`;
+            return `${hours} ${hours === 1
+                ? "hour"
+                : "hours"
+                } ago`;
         }
 
         if (days < 7) {
-            return `${days} ${
-                days === 1
-                    ? "day"
-                    : "days"
-            } ago`;
+            return `${days} ${days === 1
+                ? "day"
+                : "days"
+                } ago`;
         }
 
         return activityDate.toLocaleDateString(
@@ -146,7 +143,7 @@ const RecentActivity = ({ reports = [] }) => {
         <div className="rounded-xl border border-[#dcdddf] bg-white shadow-sm">
 
             <div className="border-b border-[#dcdddf] px-5 py-4">
-                <h2 className="text-sm font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-[#1b496d]">
                     Recent Activity
                 </h2>
 
@@ -163,19 +160,14 @@ const RecentActivity = ({ reports = [] }) => {
 
                             const config =
                                 activityConfig[
-                                    activity.type
+                                activity.type
                                 ];
 
                             const Icon =
                                 config.icon;
 
                             return (
-                                <div
-                                    key={
-                                        activity.id
-                                    }
-                                    className="flex items-center gap-4 px-5 py-4"
-                                >
+                                <div key={activity.id} className="flex items-center gap-4 px-5 py-4">
                                     <div
                                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${config.className}`}
                                     >
@@ -186,13 +178,13 @@ const RecentActivity = ({ reports = [] }) => {
 
                                     <div className="min-w-0 flex-1">
 
-                                        <p className="text-sm font-medium text-gray-800">
+                                        <p className="text-sm font-medium text-[#1b496d] truncate">
                                             {
                                                 activity.title
                                             }
                                         </p>
 
-                                        <p className="mt-1 text-xs text-gray-400">
+                                        <p className="mt-1 text-sm text-gray-400">
                                             {
                                                 activity.time
                                             }

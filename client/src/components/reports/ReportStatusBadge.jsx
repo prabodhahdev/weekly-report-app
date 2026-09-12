@@ -1,23 +1,21 @@
-const STATUS_STYLES = {
-  draft: "bg-gray-100 text-gray-600",
-  submitted: "bg-indigo-100 text-indigo-700",
-  needs_correction: "bg-amber-100 text-amber-800",
-  approved: "bg-green-100 text-green-800",
+const STATUS_CONFIG = {
+  approved: { label: "Approved", className: "bg-[#caf19c]/40 text-[#1b496d]" },
+  needs_correction: { label: "Needs Correction", className: "bg-[#1b496d] text-white" },
+  submitted: { label: "Submitted", className: "bg-[#c5f39b] text-[#3d8086]" },
+  draft: { label: "Draft", className: "bg-[#dcdddf] text-[#5a5f66]" },
 };
 
-const STATUS_LABELS = {
-  draft: "Draft",
-  submitted: "Submitted",
-  needs_correction: "Needs Correction",
-  approved: "Approved",
-};
+export default function ReportStatusBadge({ status, className = "" }) {
+  const config = STATUS_CONFIG[status] || {
+    label: status || "-",
+    className: "bg-[#dcdddf] text-[#5a5f66]",
+  };
 
-export default function ReportStatusBadge({ status }) {
   return (
     <span
-      className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${STATUS_STYLES[status]}`}
+      className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap ${config.className} ${className}`}
     >
-      {STATUS_LABELS[status]}
+      {config.label}
     </span>
   );
 }

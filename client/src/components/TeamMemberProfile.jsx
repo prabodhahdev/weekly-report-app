@@ -1,400 +1,185 @@
-import { ArrowLeft, Eye } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Eye } from "lucide-react";
+
+import PageLoader from "../components/ui/PageLoader.jsx";
+import ReportsTable from "../components/reports/ReportsTable.jsx";
+import Pagination from "../components/ui/Pagination.jsx";
+import apiFetch from "../api/apiFetch.js";
+
+const PAGE_SIZE = 4;
+
+function initials(name = "") {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
 
 const TeamMemberProfile = () => {
-    const navigate = useNavigate();
-    const { id } = useParams();
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-    const [member, setMember] = useState(null);
-    const [reports, setReports] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [member, setMember] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchMemberData();
-    }, [id]);
+  useEffect(() => {
+    fetchMemberData();
+  }, [id]);
 
-    async function fetchMemberData() {
-        try {
-            setLoading(true);
+  async function fetchMemberData() {
+    try {
+      setLoading(true);
 
-            // Fetch users
-            const usersResponse = await fetch(
-                "http://localhost:8000/api/auth/users",
-                {
-                    credentials: "include",
-                }
-            );
+      const usersResponse = await apiFetch("/api/auth/users");
+      const usersData = await usersResponse.json();
 
-            const usersData =
-                await usersResponse.json();
+      if (!usersResponse.ok) {
+        throw new Error(usersData.message || "Failed to load team member");
+      }
 
-            if (!usersResponse.ok) {
-                throw new Error(
-                    usersData.message ||
-                    "Failed to load team member"
-                );
-            }
+      const selectedMember = (usersData.users || []).find((user) => user._id === id);
+      if (!selectedMember) {
+        throw new Error("Team member not found");
+      }
+      setMember(selectedMember);
 
-            const selectedMember =
-                (usersData.users || []).find(
-                    (user) => user._id === id
-                );
+      const reportsResponse = await fetch(
+        `http://localhost:8000/api/reports?member=${id}`,
+        { credentials: "include" }
+      );
+      const reportsData = await reportsResponse.json();
 
-            if (!selectedMember) {
-                throw new Error(
-                    "Team member not found"
-                );
-            }
-
-            setMember(selectedMember);
-
-            // Fetch this member's reports
-            const reportsResponse = await fetch(
-                `http://localhost:8000/api/reports?member=${id}`,
-                {
-                    credentials: "include",
-                }
-            );
-
-            const reportsData =
-                await reportsResponse.json();
-
-            if (!reportsResponse.ok) {
-                throw new Error(
-                    reportsData.message ||
-                    "Failed to load reports"
-                );
-            }
-
-            setReports(
-                reportsData.reports || []
-            );
-
-        } catch (error) {
-            console.error(
-                "Fetch team member profile error:",
-                error
-            );
-
-            toast.error(
-                error.message ||
-                "Failed to load team member"
-            );
-
-            navigate("/manager-team");
-
-        } finally {
-            setLoading(false);
-        }
+      if (!reportsResponse.ok) {
+        throw new Error(reportsData.message || "Failed to load reports");
+      }
+      setReports(reportsData.reports || []);
+    } catch (error) {
+      console.error("Fetch team member profile error:", error);
+      toast.error(error.message || "Failed to load team member");
+      navigate("/manager-team");
+    } finally {
+      setLoading(false);
     }
+  }
 
-    if (loading) {
-        return (
-            <div className="w-full h-full flex items-center justify-center">
-                <p className="text-sm text-gray-500">
-                    Loading team member...
-                </p>
-            </div>
-        );
-    }
+  const totalReports = reports.length;
+  const approved = reports.filter((r) => r.status === "approved").length;
+  const needsCorrection = reports.filter((r) => r.status === "needs_correction").length;
+  const submitted = reports.filter((r) => r.status === "submitted").length;
+  const draft = reports.filter((r) => r.status === "draft").length;
 
-    if (!member) {
-        return (
-            <div className="w-full h-full flex items-center justify-center">
-                <p className="text-sm text-gray-500">
-                    Team member not found.
-                </p>
-            </div>
-        );
-    }
+  const stats = [
+    { label: "Total Reports", value: totalReports },
+    { label: "Approved", value: approved },
+    { label: "Needs Correction", value: needsCorrection },
+    { label: "Submitted", value: submitted },
+    { label: "Draft", value: draft },
+  ];
 
-    const totalReports = reports.length;
+  const totalPages = Math.max(1, Math.ceil(reports.length / PAGE_SIZE));
+  const pagedReports = useMemo(
+    () => reports.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [reports, page]
+  );
 
-    const approved = reports.filter(
-        (report) =>
-            report.status === "approved"
-    ).length;
-
-    const needsCorrection = reports.filter(
-        (report) =>
-            report.status === "needs_correction"
-    ).length;
-
-    const submitted = reports.filter(
-        (report) =>
-            report.status === "submitted"
-    ).length;
-
-    const draft = reports.filter(
-        (report) =>
-            report.status === "draft"
-    ).length;
-
-    const stats = [
-        {
-            label: "Total Reports",
-            value: totalReports,
-        },
-        {
-            label: "Approved",
-            value: approved,
-        },
-        {
-            label: "Needs Correction",
-            value: needsCorrection,
-        },
-        {
-            label: "Submitted",
-            value: submitted,
-        },
-        {
-            label: "Draft",
-            value: draft,
-        },
+  function getActions(report) {
+    return [
+      {
+        label: "View report",
+        icon: Eye,
+        onClick: () => navigate(`/manager-report/${report._id}`),
+      },
     ];
+  }
 
-    const getStatusLabel = (status) => {
-        if (status === "needs_correction") {
-            return "Needs Correction";
-        }
+  if (loading) return <PageLoader label="Loading team member..." />;
 
-        if (status === "approved") {
-            return "Approved";
-        }
-
-        if (status === "submitted") {
-            return "Submitted";
-        }
-
-        if (status === "draft") {
-            return "Draft";
-        }
-
-        return status;
-    };
-
-    const getStatusClass = (status) => {
-        if (status === "approved") {
-            return "bg-[#caf29a]/60 text-[#1b496d]";
-        }
-
-        if (status === "needs_correction") {
-            return "bg-red-50 text-red-600";
-        }
-
-        if (status === "submitted") {
-            return "bg-blue-50 text-blue-600";
-        }
-
-        return "bg-gray-100 text-gray-600";
-    };
-
-    const formatWeek = (
-        weekStart,
-        weekEnd
-    ) => {
-        const options = {
-            month: "short",
-            day: "numeric",
-        };
-
-        const start = new Date(
-            weekStart
-        ).toLocaleDateString(
-            undefined,
-            options
-        );
-
-        const end = new Date(
-            weekEnd
-        ).toLocaleDateString(
-            undefined,
-            options
-        );
-
-        return `${start} – ${end}`;
-    };
-
+  if (!member) {
     return (
-        <div className="w-full h-full flex flex-col">
-            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
-
-                {/* Header */}
-                <div className="mb-6">
-                    <button
-                        type="button"
-                        onClick={() =>
-                            navigate(
-                                "/manager-team"
-                            )
-                        }
-                        className="mb-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#1b496d]"
-                    >
-                        <ArrowLeft size={16} />
-                        Back to Team Members
-                    </button>
-
-                    <h1 className="text-lg font-semibold text-[#1b496d]">
-                        {member.name}
-                    </h1>
-
-                    <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
-                        <span>
-                            {member.email}
-                        </span>
-
-                        <span>•</span>
-
-                        <span>
-                            {member.role}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Statistics */}
-                <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-                    {stats.map((stat) => (
-                        <div
-                            key={stat.label}
-                            className="rounded-xl border border-[#dcdddf] bg-white p-4 shadow-sm"
-                        >
-                            <p className="text-xs text-gray-500">
-                                {stat.label}
-                            </p>
-
-                            <p className="mt-2 text-2xl font-semibold text-[#1b496d]">
-                                {stat.value}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Report History */}
-                <div className="rounded-xl border border-[#dcdddf] bg-white shadow-sm">
-
-                    {/* Section Header */}
-                    <div className="border-b border-[#dcdddf] px-5 py-4">
-                        <h2 className="text-sm font-semibold text-gray-900">
-                            Report History
-                        </h2>
-
-                        <p className="mt-1 text-xs text-gray-500">
-                            View this team member's previous weekly reports.
-                        </p>
-                    </div>
-
-                    {/* Table */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-
-                            <thead>
-                                <tr className="border-b border-[#dcdddf] text-left">
-
-                                    <th className="px-5 py-3 text-xs font-medium text-gray-500">
-                                        Week
-                                    </th>
-
-                                    <th className="px-5 py-3 text-xs font-medium text-gray-500">
-                                        Project
-                                    </th>
-
-                                    <th className="px-5 py-3 text-xs font-medium text-gray-500">
-                                        Status
-                                    </th>
-
-                                    <th className="px-5 py-3 text-right text-xs font-medium text-gray-500">
-                                        Action
-                                    </th>
-
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {reports.length > 0 ? (
-                                    reports.map(
-                                        (report) => {
-
-                                            const projectName =
-                                                typeof report.project === "object"
-                                                    ? report.project?.name
-                                                    : report.project;
-
-                                            return (
-                                                <tr
-                                                    key={report._id}
-                                                    className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
-                                                >
-
-                                                    {/* Week */}
-                                                    <td className="px-5 py-4 text-gray-700">
-                                                        {formatWeek(
-                                                            report.weekStart,
-                                                            report.weekEnd
-                                                        )}
-                                                    </td>
-
-                                                    {/* Project */}
-                                                    <td className="px-5 py-4 text-gray-700">
-                                                        {projectName || "-"}
-                                                    </td>
-
-                                                    {/* Status */}
-                                                    <td className="px-5 py-4">
-                                                        <span
-                                                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
-                                                                report.status
-                                                            )}`}
-                                                        >
-                                                            {getStatusLabel(
-                                                                report.status
-                                                            )}
-                                                        </span>
-                                                    </td>
-
-                                                    {/* Action */}
-                                                    <td className="px-5 py-4 text-right">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                navigate(
-                                                                    `/manager-report/${report._id}`
-                                                                )
-                                                            }
-                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#dcdddf] px-3 py-2 text-xs font-medium text-[#1b496d] hover:bg-[#1b496d]/5"
-                                                        >
-                                                            <Eye
-                                                                size={15}
-                                                            />
-                                                            View
-                                                        </button>
-                                                    </td>
-
-                                                </tr>
-                                            );
-                                        }
-                                    )
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan="4"
-                                            className="px-5 py-10 text-center text-sm text-gray-500"
-                                        >
-                                            No reports found for this team member.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-
-                        </table>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-sm text-[#9ca3af]">Team member not found.</p>
+      </div>
     );
+  }
+
+  return (
+    <div className="w-full h-full flex flex-col bg-[#f2f2f2]">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
+        {/* Header */}
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => navigate("/manager-team")}
+            className="mb-4 inline-flex bg-[#1b496dba] py-1 px-2 items-center gap-2 text-sm text-white rounded-full cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1b496d]/10 text-sm font-semibold text-[#1b496d]">
+              {initials(member.name) || "-"}
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-[#1b3040]">{member.name}</h1>
+              <div className="mt-0.5 flex items-center gap-2 text-sm text-[#6b7280]">
+                <span>{member.email}</span>
+                <span>•</span>
+                <span className="capitalize">{member.role}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-xl border border-[#dcdddf] bg-white p-4 shadow-sm"
+            >
+              <p className="text-xs text-[#6b7280]">{stat.label}</p>
+              <p className="mt-2 text-2xl font-semibold text-[#1b496d]">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Report History */}
+        <div className="rounded-xl border border-[#dcdddf] bg-white shadow-sm overflow-hidden">
+          <div className="border-b border-[#dcdddf] px-5 py-4">
+            <h2 className="text-sm font-semibold text-[#1b3040]">Report History</h2>
+            <p className="mt-0.5 text-xs text-[#9ca3af]">
+              View this team member's previous weekly reports.
+            </p>
+          </div>
+
+          {reports.length > 0 ? (
+            <>
+              <ReportsTable reports={pagedReports} getActions={getActions} />
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+                totalItems={reports.length}
+                pageSize={PAGE_SIZE}
+              />
+            </>
+          ) : (
+            <div className="px-5 py-10 text-center text-sm text-[#9ca3af]">
+              No reports found for this team member.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TeamMemberProfile;

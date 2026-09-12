@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Eye } from "lucide-react";
 import { toast } from "react-toastify";
 
 import WeeklyReportPage from "../WeeklyReportPage.jsx";
+import apiFetch from "../../api/apiFetch.js";
 
 export default function EditMyReportPage() {
     const { id } = useParams();
@@ -18,11 +18,8 @@ export default function EditMyReportPage() {
 
     async function fetchReport() {
         try {
-            const response = await fetch(
-                `http://localhost:8000/api/reports/my-reports/${id}`,
-                {
-                    credentials: "include",
-                }
+            const response = await apiFetch(
+                `/api/reports/my-reports/${id}`
             );
 
             const data = await response.json();
@@ -136,23 +133,7 @@ export default function EditMyReportPage() {
 
             <div className="flex-1 overflow-y-auto">
 
-                {/* View shortcut */}
-                <div className="px-4 sm:px-8 pt-5">
-
-                    <button
-                        type="button"
-                        onClick={() =>
-                            navigate(
-                                `/member-report/${id}`
-                            )
-                        }
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
-                    >
-                        <Eye size={16} />
-                        View report
-                    </button>
-
-                </div>
+                
 
                 <WeeklyReportPage
                     initialReport={report}

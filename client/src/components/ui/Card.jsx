@@ -3,8 +3,8 @@ export default function Card({ title, icon: Icon, description, children, classNa
     <div className={`bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6 ${className}`}>
       {(title || Icon) && (
         <div className="flex items-center gap-2 mb-1">
-          {Icon && <Icon size={17} className="text-indigo-600" aria-hidden="true" />}
-          {title && <h2 className="text-sm font-semibold text-gray-900">{title}</h2>}
+          {Icon && <Icon size={17} className="text-[#1b496d]" aria-hidden="true" />}
+          {title && <h2 className="text-sm font-semibold text-[#1b496d]">{title}</h2>}
         </div>
       )}
       {description && (

@@ -15,10 +15,10 @@ export default function UserForm({
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="mb-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#1b496d]"
+                        className="mb-4 inline-flex bg-[#1b496dba] py-1 px-2 items-center gap-2 text-sm text-white rounded-full cursor-pointer"
                     >
                         <ArrowLeft size={16} />
-                        Back to User Management
+                        Back
                     </button>
 
                     <h1 className="text-lg font-semibold text-[#1b496d]">
@@ -142,7 +142,7 @@ export default function UserForm({
                             type="button"
                             onClick={onCancel}
                             disabled={loading}
-                            className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                            className="rounded-lg border cursor-pointer border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                         >
                             Cancel
                         </button>
@@ -150,7 +150,7 @@ export default function UserForm({
                         <button
                             type="submit"
                             disabled={loading}
-                            className="inline-flex items-center gap-2 rounded-lg bg-[#1b496d] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3c8385] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#1b496d] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3c8385] disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <Save size={16} />
 

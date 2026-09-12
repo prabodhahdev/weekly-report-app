@@ -39,7 +39,7 @@ export default function ProjectForm({
         return members.filter(
             (member) =>
                 member.name?.toLowerCase().includes(value) ||
-                member.email?.toLowerCase().includes(value)
+                member.email?.toLowerCase().includes(value),
         );
     }, [members, search]);
 
@@ -64,9 +64,7 @@ export default function ProjectForm({
         onChange({
             target: {
                 name: "members",
-                value: selectedMemberIds.filter(
-                    (id) => id !== memberId
-                ),
+                value: selectedMemberIds.filter((id) => id !== memberId),
             },
         });
     };
@@ -74,25 +72,20 @@ export default function ProjectForm({
     return (
         <div className="w-full h-full flex flex-col">
             <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
-
                 {/* Header */}
                 <div className="mb-6">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="mb-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#1b496d]"
+                        className="mb-4 inline-flex bg-[#1b496dba] py-1 px-2 items-center gap-2 text-sm text-white rounded-full cursor-pointer"
                     >
                         <ArrowLeft size={16} />
-                        Back to Projects
+                        Back
                     </button>
 
-                    <h1 className="text-lg font-semibold text-[#1b496d]">
-                        {title}
-                    </h1>
+                    <h1 className="text-lg font-semibold text-[#1b496d]">{title}</h1>
 
-                    <p className="mt-1 text-sm text-gray-500">
-                        {description}
-                    </p>
+                    <p className="mt-1 text-sm text-gray-500">{description}</p>
                 </div>
 
                 {/* Form */}
@@ -107,7 +100,6 @@ export default function ProjectForm({
                     </div>
 
                     <div className="space-y-5 p-5">
-
                         {/* Project Name */}
                         <div>
                             <label
@@ -162,7 +154,7 @@ export default function ProjectForm({
                                 <div className="mb-3 flex flex-wrap gap-2">
                                     {selectedMemberIds.map((memberId) => {
                                         const member = members.find(
-                                            (item) => item._id === memberId
+                                            (item) => item._id === memberId,
                                         );
 
                                         if (!member) return null;
@@ -177,9 +169,7 @@ export default function ProjectForm({
                                                 {!isView && (
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            removeMember(memberId)
-                                                        }
+                                                        onClick={() => removeMember(memberId)}
                                                         className="hover:text-red-500"
                                                     >
                                                         <X size={14} />
@@ -194,9 +184,7 @@ export default function ProjectForm({
                             {/* View Mode */}
                             {isView ? (
                                 selectedMemberIds.length === 0 ? (
-                                    <p className="text-sm text-gray-400">
-                                        No members assigned.
-                                    </p>
+                                    <p className="text-sm text-gray-400">No members assigned.</p>
                                 ) : null
                             ) : (
                                 <>
@@ -210,9 +198,7 @@ export default function ProjectForm({
                                         <input
                                             type="text"
                                             value={search}
-                                            onChange={(e) =>
-                                                setSearch(e.target.value)
-                                            }
+                                            onChange={(e) => setSearch(e.target.value)}
                                             placeholder="Search by name or email..."
                                             disabled={loading}
                                             className="w-full rounded-lg border border-gray-300 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-[#3c8385] focus:ring-2 focus:ring-[#3c8385]/10 disabled:bg-gray-50"
@@ -227,25 +213,15 @@ export default function ProjectForm({
                                             </p>
                                         ) : (
                                             filteredMembers.map((member) => {
-                                                const selected =
-                                                    selectedMemberIds.includes(
-                                                        member._id
-                                                    );
+                                                const selected = selectedMemberIds.includes(member._id);
 
                                                 return (
                                                     <button
                                                         key={member._id}
                                                         type="button"
-                                                        onClick={() =>
-                                                            toggleMember(
-                                                                member._id
-                                                            )
-                                                        }
-                                                        className={`flex w-full items-center justify-between px-3 py-2.5 text-left hover:bg-gray-50 ${
-                                                            selected
-                                                                ? "bg-[#1b496d]/5"
-                                                                : ""
-                                                        }`}
+                                                        onClick={() => toggleMember(member._id)}
+                                                        className={`flex w-full items-center justify-between px-3 py-2.5 text-left hover:bg-gray-50 ${selected ? "bg-[#1b496d]/5" : ""
+                                                            }`}
                                                     >
                                                         <div>
                                                             <p className="text-sm font-medium text-gray-800">
@@ -282,36 +258,25 @@ export default function ProjectForm({
 
                             {isView ? (
                                 <span
-                                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                                        formData.isActive
+                                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${formData.isActive
                                             ? "bg-[#caf29a]/60 text-[#1b496d]"
                                             : "bg-gray-100 text-gray-500"
-                                    }`}
+                                        }`}
                                 >
-                                    {formData.isActive
-                                        ? "Active"
-                                        : "Inactive"}
+                                    {formData.isActive ? "Active" : "Inactive"}
                                 </span>
                             ) : (
                                 <select
                                     id="isActive"
                                     name="isActive"
-                                    value={
-                                        formData.isActive
-                                            ? "true"
-                                            : "false"
-                                    }
+                                    value={formData.isActive ? "true" : "false"}
                                     onChange={onChange}
                                     disabled={loading}
                                     className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#3c8385] focus:ring-2 focus:ring-[#3c8385]/10 disabled:bg-gray-50"
                                 >
-                                    <option value="true">
-                                        Active
-                                    </option>
+                                    <option value="true">Active</option>
 
-                                    <option value="false">
-                                        Inactive
-                                    </option>
+                                    <option value="false">Inactive</option>
                                 </select>
                             )}
                         </div>
@@ -324,7 +289,7 @@ export default function ProjectForm({
                                 type="button"
                                 onClick={onCancel}
                                 disabled={loading}
-                                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                className="rounded-lg border border-gray-300 cursor-pointer px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                             >
                                 Cancel
                             </button>
@@ -332,7 +297,7 @@ export default function ProjectForm({
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="inline-flex items-center gap-2 rounded-lg bg-[#1b496d] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3c8385] disabled:cursor-not-allowed disabled:opacity-60"
+                                className="inline-flex items-center gap-2 cursor-pointer rounded-lg bg-[#1b496d] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3c8385] disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <Save size={16} />
 

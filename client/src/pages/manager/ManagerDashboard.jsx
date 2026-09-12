@@ -15,6 +15,7 @@ import ReportStatusChart from "../../components/dashboard/ReportStatusChart";
 import ProjectWorkloadChart from "../../components/dashboard/ProjectWorkloadChart";
 import TaskTypeTimeChart from "../../components/dashboard/TaskTypeTimeChart";
 import RecentActivity from "../../components/dashboard/RecentActivity";
+import apiFetch from "../../api/apiFetch";
 
 const ManagerDashboard = () => {
     const [reports, setReports] = useState([]);
@@ -28,12 +29,7 @@ const ManagerDashboard = () => {
         try {
             setLoading(true);
 
-            const response = await fetch(
-                "http://localhost:8000/api/reports",
-                {
-                    credentials: "include",
-                }
-            );
+            const response = await apiFetch("/api/reports");
 
             const data = await response.json();
 
@@ -118,10 +114,10 @@ const ManagerDashboard = () => {
     const complianceRate =
         reviewedReports > 0
             ? Math.round(
-                  (approvedCount /
-                      reviewedReports) *
-                      100
-              )
+                (approvedCount /
+                    reviewedReports) *
+                100
+            )
             : 0;
 
     // Open blockers
@@ -160,8 +156,8 @@ const ManagerDashboard = () => {
             <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-8">
 
                 <div className="mb-6">
-                    <h1 className="text-lg font-semibold text-[#1b496d]">
-                        Manager Dashboard
+                    <h1 className="text-xl lg:text-3xl font-bold text-[#518a88]">
+                        Welcome Back!
                     </h1>
 
                     <p className="mt-1 text-sm text-gray-500">
@@ -177,7 +173,7 @@ const ManagerDashboard = () => {
                         value={reportsSubmittedThisWeek}
                         description="This week"
                         icon={FileCheck2}
-                        iconClassName="bg-[#1b496d]/10 text-[#1b496d]"
+                        variant="teal"
                     />
 
                     <DashboardStatCard
@@ -185,7 +181,7 @@ const ManagerDashboard = () => {
                         value={`${complianceRate}%`}
                         description="Approved vs reports needing correction"
                         icon={Percent}
-                        iconClassName="bg-[#3c8385]/10 text-[#3c8385]"
+                        variant="navy"
                     />
 
                     <DashboardStatCard
@@ -193,7 +189,7 @@ const ManagerDashboard = () => {
                         value={correctionCount}
                         description="Reports awaiting resubmission"
                         icon={AlertTriangle}
-                        iconClassName="bg-red-50 text-red-600"
+                        variant="navyDeep"
                     />
 
                     <DashboardStatCard
@@ -201,7 +197,7 @@ const ManagerDashboard = () => {
                         value={openBlockers}
                         description="Key blockers across the team"
                         icon={CircleAlert}
-                        iconClassName="bg-orange-50 text-orange-600"
+                        variant="mint"
                     />
 
                 </div>

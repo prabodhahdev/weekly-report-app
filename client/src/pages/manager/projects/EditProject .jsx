@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import ProjectForm from "../../../components/ProjectForm";
+import ProjectForm from "../../../components/ui/ProjectForm";
+import apiFetch from "../../../api/apiFetch";
 
 export default function EditProject() {
     const { id } = useParams();
@@ -22,12 +23,8 @@ export default function EditProject() {
         const fetchData = async () => {
             try {
                 const [projectResponse, usersResponse] = await Promise.all([
-                    fetch(`http://localhost:8000/api/projects/${id}`, {
-                        credentials: "include",
-                    }),
-                    fetch("http://localhost:8000/api/auth/users", {
-                        credentials: "include",
-                    }),
+                    apiFetch(`/api/projects/${id}`),
+                    apiFetch("/api/auth/users"),
                 ]);
 
                 const projectData = await projectResponse.json();
@@ -87,8 +84,8 @@ export default function EditProject() {
         setSaving(true);
 
         try {
-            const response = await fetch(
-                `http://localhost:8000/api/projects/${id}`,
+            const response = await apiFetch(
+                `/api/projects/${id}`,
                 {
                     method: "PUT",
                     headers: {

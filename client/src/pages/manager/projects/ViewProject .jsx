@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import ProjectForm from "../../../components/ProjectForm";
+import ProjectForm from "../../../components/ui/ProjectForm";
+import apiFetch from "../../../api/apiFetch";
 
 export default function ViewProject() {
     const { id } = useParams();
@@ -19,12 +20,7 @@ export default function ViewProject() {
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const response = await fetch(
-                    `http://localhost:8000/api/projects/${id}`,
-                    {
-                        credentials: "include",
-                    }
-                );
+                const response = await apiFetch(`/api/projects/${id}`);
 
                 const data = await response.json();
 

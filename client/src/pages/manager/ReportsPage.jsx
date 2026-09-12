@@ -4,6 +4,7 @@ import { Eye, Check, MessageSquare } from "lucide-react";
 import { toast } from "react-toastify";
 
 import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
+import apiFetch from "../../api/apiFetch.js";
 
 export default function ReportsPage() {
     const navigate = useNavigate();
@@ -19,12 +20,7 @@ export default function ReportsPage() {
         try {
             setLoading(true);
 
-            const response = await fetch(
-                "http://localhost:8000/api/reports",
-                {
-                    credentials: "include",
-                }
-            );
+            const response = await apiFetch("/api/reports");
 
             const data = await response.json();
 
@@ -59,8 +55,8 @@ export default function ReportsPage() {
         comment = ""
     ) {
         try {
-            const response = await fetch(
-                `http://localhost:8000/api/reports/${reportId}/review`,
+            const response = await apiFetch(
+                `/api/reports/${reportId}/review`,
                 {
                     method: "PUT",
                     headers: {

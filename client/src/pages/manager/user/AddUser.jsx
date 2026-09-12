@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import UserForm from "../../../components/UserForm";
+import UserForm from "../../../components/ui/UserForm";
+import apiFetch from "../../../api/apiFetch";
 
 export default function AddUser() {
     const navigate = useNavigate();
@@ -31,8 +32,8 @@ export default function AddUser() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:8000/api/auth/users",
+            const response = await apiFetch(
+                "/api/auth/users",
                 {
                     method: "POST",
                     credentials: "include",

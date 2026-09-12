@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { useAuth } from '../../context/AuthContext'
+import apiFetch from '../../api/apiFetch'
 
 const AuthForm = ({ mode }) => {
     const isLogin = mode === 'login'
@@ -34,8 +35,8 @@ const AuthForm = ({ mode }) => {
 
         try {
             const endpoint = isLogin
-                ? 'http://localhost:8000/api/auth/login'
-                : 'http://localhost:8000/api/auth/register'
+                ? '/api/auth/login'
+                : '/api/auth/register'
 
             const data = isLogin
                 ? {
@@ -44,16 +45,17 @@ const AuthForm = ({ mode }) => {
                 }
                 : formData
 
-            const response = await fetch(endpoint, {
+            const response = await apiFetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
                 body: JSON.stringify(data)
             })
 
             const result = await response.json()
+            console.log("LOGIN RESULT:", result);
+console.log("LOGIN USER:", result.user);
 
             if (!response.ok) {
                 toast.error(result.errors ? result.errors[0].msg : result.msg)
@@ -65,7 +67,7 @@ const AuthForm = ({ mode }) => {
             if (isLogin) {
                 login(result.user)
 
-                if(result.user.role === 'manager') {
+                if (result.user.role === 'manager') {
                     navigate('/manager-dashboard')
                 }
                 else {
@@ -93,7 +95,7 @@ const AuthForm = ({ mode }) => {
                     WR
                 </div>
 
-                <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+                <h1 className="text-2xl font-bold tracking-tight text-[#1b496d]">
                     {isLogin
                         ? 'Welcome back'
                         : 'Create your account'
@@ -204,7 +206,7 @@ const AuthForm = ({ mode }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full cursor-pointer rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="w-full cursor-pointer rounded-lg bg-[#1b496d] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading
                             ? 'Please wait...'
@@ -228,7 +230,7 @@ const AuthForm = ({ mode }) => {
                         <button
                             type="button"
                             onClick={() => navigate(isLogin ? '/register' : '/')}
-                            className="ml-1 font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                            className="ml-1 font-semibold text-[#1b496d] hover:text-[#1b496d]/70 cursor-pointer"
                         >
                             {isLogin ? 'Create account' : 'Sign in'}
                         </button>

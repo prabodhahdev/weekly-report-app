@@ -20,7 +20,7 @@ const register = async (req, res) => {
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10)
-        
+
         // Create new user
         const newUser = new User({
             name,
@@ -109,13 +109,22 @@ const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
-        return res.status(200).json({
-            msg: "Login successful",
-            user:{
-                userId: user._id,
-                role: user.role,
-            }
-        })
+        console.log("LOGIN USER FROM DATABASE:", {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+})
+
+return res.status(200).json({
+    msg: "Login successful",
+    user: {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+    }
+})
 
     } catch (error) {
         console.log(error)
@@ -454,7 +463,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
     register,
     login,
-    refresh,    
+    refresh,
     logout,
     getProfile,
     getUsers,

@@ -1,4 +1,3 @@
-
 import {
     ResponsiveContainer,
     BarChart,
@@ -10,16 +9,12 @@ import {
 } from "recharts";
 
 const ProjectWorkloadChart = ({ reports = [] }) => {
-
     const projectMap = {};
 
     reports.forEach((report) => {
-        const projectName =
-            report.project?.name || "No Project";
+        const projectName = report.project?.name || "No Project";
 
-        const tasks =
-            report.currentVersion?.tasksCompleted ||
-            [];
+        const tasks = report.currentVersion?.tasksCompleted || [];
 
         if (!projectMap[projectName]) {
             projectMap[projectName] = 0;
@@ -33,17 +28,13 @@ const ProjectWorkloadChart = ({ reports = [] }) => {
             project,
             tasks,
         }))
-        .sort(
-            (a, b) =>
-                b.tasks - a.tasks
-        )
+        .sort((a, b) => b.tasks - a.tasks)
         .slice(0, 6);
 
     return (
         <div className="rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
-
             <div className="mb-5">
-                <h2 className="text-sm font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-[#1b496d]">
                     Workload by Project
                 </h2>
 
@@ -53,12 +44,8 @@ const ProjectWorkloadChart = ({ reports = [] }) => {
             </div>
 
             <div className="h-72 w-full">
-
                 {data.length > 0 ? (
-                    <ResponsiveContainer
-                        width="100%"
-                        height="100%"
-                    >
+                    <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             data={data}
                             layout="vertical"
@@ -67,10 +54,7 @@ const ProjectWorkloadChart = ({ reports = [] }) => {
                                 right: 15,
                             }}
                         >
-                            <CartesianGrid
-                                strokeDasharray="3 3"
-                                horizontal={false}
-                            />
+                            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
 
                             <XAxis
                                 type="number"
@@ -95,23 +79,15 @@ const ProjectWorkloadChart = ({ reports = [] }) => {
                                 dataKey="tasks"
                                 name="Tasks"
                                 fill="#3c8385"
-                                radius={[
-                                    0,
-                                    5,
-                                    5,
-                                    0,
-                                ]}
+                                radius={[0, 5, 5, 0]}
                             />
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
                     <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-gray-500">
-                            No project data available.
-                        </p>
+                        <p className="text-sm text-gray-500">No project data available.</p>
                     </div>
                 )}
-
             </div>
         </div>
     );

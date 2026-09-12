@@ -1,3 +1,4 @@
+console.log("SERVER.JS LOADED")
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -19,6 +20,8 @@ app.use(cors(
 ))
 app.use(express.json())
 app.use(cookieParser())
+
+app.use(express.json())
 
 //Connect the database
 connectDB()

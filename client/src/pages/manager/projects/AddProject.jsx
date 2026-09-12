@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import ProjectForm from "../../../components/ProjectForm";
+import ProjectForm from "../../../components/ui/ProjectForm";
+import apiFetch from "../../../api/apiFetch";
 
 export default function AddProject() {
     const navigate = useNavigate();
@@ -20,12 +21,7 @@ export default function AddProject() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch(
-                    "http://localhost:8000/api/auth/users",
-                    {
-                        credentials: "include",
-                    }
-                );
+                const response = await apiFetch("/api/auth/users");
 
                 const data = await response.json();
 
@@ -63,8 +59,8 @@ export default function AddProject() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:8000/api/projects",
+            const response = await apiFetch(
+                "/api/projects",
                 {
                     method: "POST",
                     headers: {

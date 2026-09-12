@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
 import { toast } from "react-toastify";
 import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
+import apiFetch from "../../api/apiFetch.js";
 
 const EDITABLE_STATUSES = [
     "draft",
@@ -21,11 +22,8 @@ export default function MyReportsPage() {
 
     async function fetchReports() {
         try {
-            const response = await fetch(
-                "http://localhost:8000/api/reports/my-reports",
-                {
-                    credentials: "include",
-                }
+            const response = await apiFetch(
+                "/api/reports/my-reports"
             );
 
             const data = await response.json();

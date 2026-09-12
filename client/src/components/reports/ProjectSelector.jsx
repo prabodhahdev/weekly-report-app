@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import apiFetch from "../../api/apiFetch";
 export default function ProjectSelect({
     value,
     onChange,
@@ -11,12 +11,7 @@ export default function ProjectSelect({
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await fetch(
-                    "http://localhost:8000/api/projects/my-projects",
-                    {
-                        credentials: "include",
-                    }
-                );
+               const response = await apiFetch("/api/projects/my-projects");
 
                 const data = await response.json();
 

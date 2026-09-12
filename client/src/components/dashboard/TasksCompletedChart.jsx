@@ -71,7 +71,7 @@ const TasksCompletedChart = ({ reports = [] }) => {
         <div className="rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">
 
             <div className="mb-5">
-                <h2 className="text-sm font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-[#1b496d]">
                     Tasks Completed Trend
                 </h2>
 

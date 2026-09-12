@@ -1,7 +1,7 @@
 const refreshApi = async () => {
     try {
         const response = await fetch(
-            'http://localhost:8000/api/auth/refresh',
+            `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
             {
                 method: 'POST',
                 credentials: 'include'

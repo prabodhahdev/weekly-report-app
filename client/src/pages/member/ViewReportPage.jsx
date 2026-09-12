@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 import ViewReport from "../../components/reports/view-report/ViewReport";
 import VersionHistory from "../../components/reports/view-report/VersionHistory";
+import apiFetch from "../../api/apiFetch";
 
 const ViewReportPage = () => {
     const { id } = useParams();
@@ -20,11 +21,8 @@ const ViewReportPage = () => {
 
     async function fetchReport() {
         try {
-            const response = await fetch(
-                `http://localhost:8000/api/reports/my-reports/${id}`,
-                {
-                    credentials: "include",
-                }
+            const response = await apiFetch(
+                `/api/reports/my-reports/${id}`
             );
 
             const data = await response.json();

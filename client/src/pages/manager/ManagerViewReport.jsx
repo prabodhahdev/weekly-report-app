@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import ViewReport from "../../components/reports/view-report/ViewReport";
 import VersionHistory from "../../components/reports/view-report/VersionHistory";
 import ManagerReviewActions from "../../components/reports/review/ManagerReviewActions";
+import apiFetch from "../../api/apiFetch";
 
 const ManagerViewReport = () => {
     const navigate = useNavigate();
@@ -24,8 +25,8 @@ const ManagerViewReport = () => {
         try {
             setLoading(true);
 
-            const response = await fetch(
-                `http://localhost:8000/api/reports/${id}`,
+            const response = await apiFetch(
+                `/api/reports/${id}`,
                 {
                     credentials: "include",
                 }
@@ -73,8 +74,8 @@ const ManagerViewReport = () => {
 
     async function handleReview(data) {
         try {
-            const response = await fetch(
-                `http://localhost:8000/api/reports/${id}/review`,
+            const response = await apiFetch(
+                `/api/reports/${id}/review`,
                 {
                     method: "PUT",
                     headers: {
@@ -143,18 +144,6 @@ const ManagerViewReport = () => {
 
                 {/* Report */}
                 <main className="min-w-0 flex-1">
-
-                    {/* Back Button */}
-                    <button
-                        type="button"
-                        onClick={() =>
-                            navigate(-1)
-                        }
-                        className="mb-5 text-sm text-gray-500 hover:text-[#1b496d]"
-                    >
-                        ← Back
-                    </button>
-
                     {/* Report Content */}
                     <ViewReport
                         report={selectedVersion}
