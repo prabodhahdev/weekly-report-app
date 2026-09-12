@@ -209,7 +209,7 @@ const AuthForm = ({ mode }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full cursor-pointer rounded-lg bg-[#1b496d] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="w-full cursor-pointer rounded-lg bg-[#1b496d] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1b496dab] focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading
                             ? 'Please wait...'
