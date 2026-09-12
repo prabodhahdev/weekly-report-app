@@ -2,18 +2,6 @@
 
 ReportMe is a full-stack web application for creating, submitting, reviewing, and managing weekly team reports.
 
-## Features
-
-* Create and submit weekly reports
-* Save reports as drafts
-* Edit reports requiring correction
-* Manager review and approval
-* Report version history
-* Project and status filtering
-* Role-based access for Members and Managers
-* JWT authentication with access and refresh tokens using HTTP-only cookies
-* Manager-only AI assistant
-
 ## Tech Stack
 
 **Frontend**
@@ -29,13 +17,27 @@ ReportMe is a full-stack web application for creating, submitting, reviewing, an
 * Express.js
 * MongoDB
 * Mongoose
-* JWT
+* JWT Authentication (Access & Refresh Tokens)
 * Google Gemini API
 
 **Testing**
 
 * Jest
 * Supertest
+
+## Deployment
+
+**Live Application:**
+https://weekly-report-app-amber.vercel.app
+
+## Demo Login
+
+**Manager Account**
+
+* Email: `manager@gmail.com`
+* Password: `Manager2000@`
+
+> Use the provided demo account to access the Manager Dashboard and review the application's manager features.
 
 ## Setup Instructions
 
@@ -57,23 +59,25 @@ npm install
 
 ### 2. Configure Environment Variables
 
-Create `.env` files in both `client` and `server`.
-
-**Client `.env`**
+Create a `.env` file inside the `client` directory:
 
 ```env
 VITE_API_URL=http://localhost:8000
 ```
 
-**Server `.env`**
+Create a `.env` file inside the `server` directory:
 
 ```env
 PORT=8000
 MONGO_URI=your_mongo_url
+
 JWT_ACCESS_SECRET=your_secret
 JWT_ACCESS_EXPIRES=15m
+
 NODE_ENV=development
+
 CLIENT_URL=http://localhost:5173
+
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
@@ -88,11 +92,7 @@ cd server
 node server.js
 ```
 
-Backend:
-
-```text
-http://localhost:8000
-```
+Backend: `http://localhost:8000`
 
 ### 5. Run Frontend
 
@@ -103,10 +103,4 @@ cd client
 npm run dev
 ```
 
-Frontend:
-
-```text
-http://localhost:5173
-```
-
-The application is now ready to use.
+Frontend: `http://localhost:5173`
