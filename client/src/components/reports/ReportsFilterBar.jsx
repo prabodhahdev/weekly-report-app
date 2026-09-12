@@ -16,7 +16,8 @@ const dateFieldClass =
 export default function ReportsFilterBar({
     filters,
     onChange,
-    members
+    members,
+    role
 }) {
     const [projects, setProjects] = useState([]);
 
@@ -24,7 +25,9 @@ export default function ReportsFilterBar({
         const fetchProjects = async () => {
             try {
                 const response = await apiFetch(
-                    "/api/projects/my-projects",
+                    role === "manager"
+                        ? "/api/projects"
+                        : "/api/projects/my-projects"
                 );
 
                 const data = await response.json();
@@ -47,7 +50,7 @@ export default function ReportsFilterBar({
         };
 
         fetchProjects();
-    }, []);
+    }, [role]);
 
     function update(field, value) {
         onChange({

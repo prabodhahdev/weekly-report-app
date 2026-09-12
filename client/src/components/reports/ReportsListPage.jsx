@@ -16,6 +16,7 @@ export default function ReportsListPage({
     onNewReport,
     cardTitle = "Report history",
     pageSize = 6,
+    role
 }) {
     const [filters, setFilters] = useState({
         project: "",
@@ -100,6 +101,7 @@ export default function ReportsListPage({
                             filters={filters}
                             onChange={handleFilterChange}
                             members={members}
+                            role={role}
                         />
                     </div>
 

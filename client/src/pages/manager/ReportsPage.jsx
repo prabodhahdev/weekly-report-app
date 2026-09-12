@@ -158,6 +158,7 @@ export default function ReportsPage() {
             showMember={true}
             getActions={getActions}
             cardTitle="Team reports"
+            role="manager"
         />
     );
 }

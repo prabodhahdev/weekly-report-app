@@ -22,9 +22,6 @@ export const AuthProvider = ({ children }) => {
 
                 const data = await response.json();
 
-                console.log("PROFILE API DATA:", data);
-                console.log("PROFILE USER:", data.user);
-
                 setUser(data.user);
 
             } catch (error) {

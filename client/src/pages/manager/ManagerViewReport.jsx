@@ -33,7 +33,7 @@ const ManagerViewReport = () => {
             );
 
             const data = await response.json();
-
+     
             if (!response.ok) {
                 throw new Error(
                     data.message ||
@@ -146,18 +146,21 @@ const ManagerViewReport = () => {
                 <main className="min-w-0 flex-1">
                     {/* Report Content */}
                     <ViewReport
-                        report={selectedVersion}
+                        report={{
+                            ...selectedVersion,
+                            member: report.member,
+                        }}
                     />
 
                     {/* Manager Review Actions */}
                     {selectedVersion.status ===
                         "submitted" && (
-                        <ManagerReviewActions
-                            onReview={
-                                handleReview
-                            }
-                        />
-                    )}
+                            <ManagerReviewActions
+                                onReview={
+                                    handleReview
+                                }
+                            />
+                        )}
 
                 </main>
 

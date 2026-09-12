@@ -1,3 +1,4 @@
+
 import ReportHeader from "./ReportHeader";
 import ReportStatistics from "./ReportStatistics";
 import WeeklyHighlights from "./WeeklyHighlights";
@@ -8,6 +9,8 @@ import HoursBreakdown from "./HoursBreakdown";
 import NotesSection from "./NotesSection";
 import ManagerFeedback from "./ManagerFeedback";
 
+
+
 const ViewReport = ({ report }) => {
     if (!report) {
         return (
@@ -16,7 +19,6 @@ const ViewReport = ({ report }) => {
             </div>
         );
     }
-
     return (
         <div className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <ReportHeader report={report} />
