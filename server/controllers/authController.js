@@ -110,21 +110,21 @@ const login = async (req, res) => {
         })
 
         console.log("LOGIN USER FROM DATABASE:", {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role
-})
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        })
 
-return res.status(200).json({
-    msg: "Login successful",
-    user: {
-        userId: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-    }
-})
+        return res.status(200).json({
+            msg: "Login successful",
+            user: {
+                userId: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        })
 
     } catch (error) {
         console.log(error)
@@ -273,8 +273,8 @@ const logout = async (req, res) => {
         // Clear access token cookie
         res.clearCookie('accessToken', {
             httpOnly: true,
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            sameSite: 'lax'
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
         })
 
         // Clear refresh token cookie
