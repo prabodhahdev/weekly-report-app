@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar.jsx";
 import MobileHeader from "./MobileHeader.jsx";
+import AIChat from "../ai/AiChat.jsx";
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,6 +16,7 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <AIChat/>
     </div>
   );
 }

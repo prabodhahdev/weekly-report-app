@@ -1,4 +1,3 @@
-console.log("SERVER.JS LOADED")
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -7,6 +6,7 @@ const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const projectRoutes = require('./routes/projectRoutes')
 const reportRoutes = require('./routes/reportRoutes')
+const aiRoutes = require('./routes/aiRoutes')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
@@ -33,6 +33,8 @@ app.get('/',(req,res)=>{
 app.use('/api/auth', authRoutes)
 app.use('/api/projects', projectRoutes)
 app.use('/api/reports', reportRoutes)
+
+app.use('/api/ai', aiRoutes)
 
 //Start the server
 const port = process.env.PORT
