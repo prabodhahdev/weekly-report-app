@@ -1,5 +1,5 @@
 import { Eye, Clock3 } from "lucide-react";
-import ReportStatusBadge from "../ReportStatusBadge";
+import ReportStatusBadge from "@/components/reports/list/ReportStatusBadge";
 
 const VersionHistory = ({ versions = [], selectedVersionId, onViewVersion }) => {
   if (!versions.length) {

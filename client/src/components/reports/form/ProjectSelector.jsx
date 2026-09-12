@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import apiFetch from "../../api/apiFetch";
+import apiFetch from "@/api/apiFetch";
 export default function ProjectSelect({
     value,
     onChange,

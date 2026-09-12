@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import ViewReport from "../../components/reports/view-report/ViewReport";
-import VersionHistory from "../../components/reports/view-report/VersionHistory";
-import ManagerReviewActions from "../../components/reports/review/ManagerReviewActions";
-import apiFetch from "../../api/apiFetch";
+import ViewReport from "@/components/reports/view/ViewReport";
+import VersionHistory from "@/components/reports/view/VersionHistory";
+import ManagerReviewActions from "@/components/reports/review/ManagerReviewActions";
+import apiFetch from "@/api/apiFetch";
 import { ArrowLeft } from "lucide-react";
 
 const ManagerViewReport = () => {

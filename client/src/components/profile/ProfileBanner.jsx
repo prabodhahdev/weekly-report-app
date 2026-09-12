@@ -1,13 +1,7 @@
 import { Mail } from "lucide-react";
+import { getInitials } from "@/utils/initials";
 
 export default function ProfileBanner({ name, email, role }) {
-  const initials = name
-    ?.split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   return (
     <div className="relative overflow-hidden rounded-xl bg-[#1b496d] p-6 shadow-sm">
       <div
@@ -21,7 +15,7 @@ export default function ProfileBanner({ name, email, role }) {
 
       <div className="relative flex items-center gap-5">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#caf19c] text-xl font-bold text-[#1b496d] ring-4 ring-white/10">
-          {initials || "U"}
+          {getInitials(name) || "U"}
         </div>
 
         <div className="min-w-0">

@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import PageLoader from "../../../components/ui/PageLoader.jsx";
-import ReportActionsMenu from "../../../components/reports/ReportsActionsMenu.jsx";
-import apiFetch from "../../../api/apiFetch.js";
+import PageLoader from "@/components/ui/PageLoader.jsx";
+import PageHeader from "@/components/ui/PageHeader.jsx";
+import ReportActionsMenu from "@/components/reports/list/ReportsActionsMenu.jsx";
+import apiFetch from "@/api/apiFetch.js";
 
 export default function UserManagement() {
   const navigate = useNavigate();
@@ -109,24 +110,20 @@ export default function UserManagement() {
   return (
     <div className="w-full h-full flex flex-col bg-[#f2f2f2]">
       <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
-          <div>
-            <h1 className="text-lg font-semibold text-[#1b496d]">User Management</h1>
-            <p className="mt-1 text-sm text-[#6b7280]">
-              Manage team members and their roles.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => navigate("/manager-users/new")}
-            className="inline-flex items-center gap-1.5 h-10 px-4 cursor-pointer rounded-lg bg-[#1b496d] text-white text-sm font-medium hover:bg-[#153b58] transition-colors shadow-sm"
-          >
-            <Plus size={16} />
-            Invite Member
-          </button>
-        </div>
+        <PageHeader
+          title="User Management"
+          description="Manage team members and their roles."
+          action={
+            <button
+              type="button"
+              onClick={() => navigate("/manager-users/new")}
+              className="inline-flex items-center gap-1.5 h-10 px-4 cursor-pointer rounded-lg bg-[#1b496d] text-white text-sm font-medium hover:bg-[#153b58] transition-colors shadow-sm"
+            >
+              <Plus size={16} />
+              Invite Member
+            </button>
+          }
+        />
 
         {/* Loading */}
         {loading ? (

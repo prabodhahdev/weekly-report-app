@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
 import { toast } from "react-toastify";
-import ReportsListPage from "../../components/reports/ReportsListPage.jsx";
-import apiFetch from "../../api/apiFetch.js";
+import ReportsListPage from "@/components/reports/list/ReportsListPage.jsx";
+import apiFetch from "@/api/apiFetch.js";
 
 const EDITABLE_STATUSES = [
     "draft",

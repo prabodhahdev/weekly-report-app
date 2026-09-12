@@ -1,4 +1,4 @@
-import ReportStatusBadge from "../reports/ReportStatusBadge.jsx";
+import ReportStatusBadge from "@/components/reports/list/ReportStatusBadge.jsx";
 
 export default function RecentReportsTable({ reports, formatDate }) {
   return (

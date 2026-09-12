@@ -1,26 +1,17 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Eye } from "lucide-react";
 
-import PageLoader from "../components/ui/PageLoader.jsx";
-import ReportsTable from "../components/reports/ReportsTable.jsx";
-import Pagination from "../components/ui/Pagination.jsx";
-import apiFetch from "../api/apiFetch.js";
+import PageLoader from "@/components/ui/PageLoader.jsx";
+import Pagination from "@/components/ui/Pagination.jsx";
+import Avatar from "@/components/ui/Avatar.jsx";
+import ReportsTable from "@/components/reports/list/ReportsTable.jsx";
+import apiFetch from "@/api/apiFetch.js";
 
 const PAGE_SIZE = 4;
 
-function initials(name = "") {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
-
-const TeamMemberProfile = () => {
+const TeamMemberProfilePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -50,10 +41,7 @@ const TeamMemberProfile = () => {
       }
       setMember(selectedMember);
 
-      const reportsResponse = await fetch(
-        `http://localhost:8000/api/reports?member=${id}`,
-        { credentials: "include" }
-      );
+      const reportsResponse = await apiFetch(`/api/reports?member=${id}`);
       const reportsData = await reportsResponse.json();
 
       if (!reportsResponse.ok) {
@@ -112,7 +100,6 @@ const TeamMemberProfile = () => {
   return (
     <div className="w-full h-full flex flex-col bg-[#f2f2f2]">
       <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
-        {/* Header */}
         <div className="mb-6">
           <button
             type="button"
@@ -124,9 +111,7 @@ const TeamMemberProfile = () => {
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1b496d]/10 text-sm font-semibold text-[#1b496d]">
-              {initials(member.name) || "-"}
-            </div>
+            <Avatar name={member.name} size="md" />
             <div>
               <h1 className="text-lg font-semibold text-[#1b3040]">{member.name}</h1>
               <div className="mt-0.5 flex items-center gap-2 text-sm text-[#6b7280]">
@@ -138,7 +123,6 @@ const TeamMemberProfile = () => {
           </div>
         </div>
 
-        {/* Statistics */}
         <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {stats.map((stat) => (
             <div
@@ -151,7 +135,6 @@ const TeamMemberProfile = () => {
           ))}
         </div>
 
-        {/* Report History */}
         <div className="rounded-xl border border-[#dcdddf] bg-white shadow-sm overflow-hidden">
           <div className="border-b border-[#dcdddf] px-5 py-4">
             <h2 className="text-sm font-semibold text-[#1b3040]">Report History</h2>
@@ -182,4 +165,4 @@ const TeamMemberProfile = () => {
   );
 };
 
-export default TeamMemberProfile;
+export default TeamMemberProfilePage;

@@ -9,13 +9,13 @@ import {
     CircleAlert,
 } from "lucide-react";
 
-import DashboardStatCard from "../../components/dashboard/DashboardStatCard";
-import TasksCompletedChart from "../../components/dashboard/TasksCompletedChart";
-import ReportStatusChart from "../../components/dashboard/ReportStatusChart";
-import ProjectWorkloadChart from "../../components/dashboard/ProjectWorkloadChart";
-import TaskTypeTimeChart from "../../components/dashboard/TaskTypeTimeChart";
-import RecentActivity from "../../components/dashboard/RecentActivity";
-import apiFetch from "../../api/apiFetch";
+import StatCard from "@/components/dashboard/StatCard";
+import TasksCompletedChart from "@/components/dashboard/TasksCompletedChart";
+import ReportStatusChart from "@/components/dashboard/ReportStatusChart";
+import ProjectWorkloadChart from "@/components/dashboard/ProjectWorkloadChart";
+import TaskTypeTimeChart from "@/components/dashboard/TaskTypeTimeChart";
+import RecentActivity from "@/components/dashboard/RecentActivity";
+import apiFetch from "@/api/apiFetch";
 
 const ManagerDashboard = () => {
     const [reports, setReports] = useState([]);
@@ -168,7 +168,8 @@ const ManagerDashboard = () => {
                 {/* Summary Metrics */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
-                    <DashboardStatCard
+                    <StatCard
+                        layout="manager"
                         title="Reports Submitted"
                         value={reportsSubmittedThisWeek}
                         description="This week"
@@ -176,7 +177,8 @@ const ManagerDashboard = () => {
                         variant="teal"
                     />
 
-                    <DashboardStatCard
+                    <StatCard
+                        layout="manager"
                         title="Compliance Rate"
                         value={`${complianceRate}%`}
                         description="Approved vs reports needing correction"
@@ -184,7 +186,8 @@ const ManagerDashboard = () => {
                         variant="navy"
                     />
 
-                    <DashboardStatCard
+                    <StatCard
+                        layout="manager"
                         title="Needs Correction"
                         value={correctionCount}
                         description="Reports awaiting resubmission"
@@ -192,7 +195,8 @@ const ManagerDashboard = () => {
                         variant="navyDeep"
                     />
 
-                    <DashboardStatCard
+                    <StatCard
+                        layout="manager"
                         title="Open Blockers"
                         value={openBlockers}
                         description="Key blockers across the team"

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import ViewReport from "../../components/reports/view-report/ViewReport";
-import VersionHistory from "../../components/reports/view-report/VersionHistory";
-import apiFetch from "../../api/apiFetch";
-import BackButton from "../../components/ui/BackButton";
-import EditButton from "../../components/ui/EditButton";
+import ViewReport from "@/components/reports/view/ViewReport";
+import VersionHistory from "@/components/reports/view/VersionHistory";
+import apiFetch from "@/api/apiFetch";
+import BackButton from "@/components/ui/BackButton";
+import EditButton from "@/components/ui/EditButton";
 
 const ViewReportPage = () => {
     const { id } = useParams();

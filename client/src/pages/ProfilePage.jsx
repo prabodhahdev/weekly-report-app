@@ -1,11 +1,11 @@
-import Profile from "../components/Profile"
+import ProfileView from "@/components/profile/ProfileView";
 
 const ProfilePage = () => {
   return (
     <div>
-      <Profile/>
+      <ProfileView />
     </div>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;

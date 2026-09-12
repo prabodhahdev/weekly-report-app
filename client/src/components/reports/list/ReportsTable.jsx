@@ -1,20 +1,12 @@
 import ReportStatusBadge from "./ReportStatusBadge.jsx";
 import ReportActionsMenu from "./ReportsActionsMenu.jsx";
+import Avatar from "@/components/ui/Avatar.jsx";
 
 function formatRange(weekStart, weekEnd) {
   const opts = { month: "short", day: "numeric" };
   const start = new Date(weekStart).toLocaleDateString(undefined, opts);
   const end = new Date(weekEnd).toLocaleDateString(undefined, opts);
   return `${start} – ${end}`;
-}
-
-function initials(name = "") {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }
 
 export default function ReportsTable({ reports, showMember, getActions }) {
@@ -58,9 +50,7 @@ export default function ReportsTable({ reports, showMember, getActions }) {
                 {showMember && (
                   <td className="p-3">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1b496d]/10 text-[10px] font-semibold text-[#1b496d]">
-                        {initials(memberName) || "-"}
-                      </div>
+                      <Avatar name={memberName} size="sm" />
                       <span className="font-medium text-[#6b7280]">
                         {memberName || "-"}
                       </span>

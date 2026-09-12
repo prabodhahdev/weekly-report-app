@@ -1,5 +1,5 @@
 import { CalendarDays, FolderKanban, UserRound } from "lucide-react";
-import ReportStatusBadge from "../ReportStatusBadge";
+import ReportStatusBadge from "@/components/reports/list/ReportStatusBadge";
 
 const ReportHeader = ({ report }) => {
   const projectName =

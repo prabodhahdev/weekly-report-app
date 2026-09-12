@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import UserForm from "../../../components/ui/UserForm";
-import apiFetch from "../../../api/apiFetch";
+import UserForm from "@/components/users/UserForm";
+import apiFetch from "@/api/apiFetch";
 
 export default function AddUser() {
     const navigate = useNavigate();

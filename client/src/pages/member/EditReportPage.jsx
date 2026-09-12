@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import WeeklyReportPage from "../WeeklyReportPage.jsx";
-import apiFetch from "../../api/apiFetch.js";
-import BackButton from "../../components/ui/BackButton.jsx";
+import WeeklyReportPage from "@/pages/WeeklyReportPage.jsx";
+import apiFetch from "@/api/apiFetch.js";
+import BackButton from "@/components/ui/BackButton.jsx";
 
 export default function EditMyReportPage() {
     const { id } = useParams();

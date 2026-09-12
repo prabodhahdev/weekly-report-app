@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import ProjectForm from "../../../components/ui/ProjectForm";
-import apiFetch from "../../../api/apiFetch";
+import ProjectForm from "@/components/projects/ProjectForm";
+import apiFetch from "@/api/apiFetch";
 
 export default function AddProject() {
     const navigate = useNavigate();

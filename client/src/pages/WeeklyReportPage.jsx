@@ -9,17 +9,17 @@ import {
   StickyNote,
 } from "lucide-react";
 
-import Card from "../components/ui/Card.jsx";
-import WeeklyReportHeader from "../components/reports/WeeklyReportHeader.jsx";
-import WeekSelector from "../components/reports/WeekSelector.jsx";
-import ProjectSelect from "../components/reports/ProjectSelector.jsx";
-import TasksCompletedTable from "../components/reports/TasksCompletedTable.jsx";
-import TasksPlannedList from "../components/reports/TaskPlannedList.jsx";
-import FlaggableList from "../components/reports/FlaggableList.jsx";
-import HoursBreakdown from "../components/reports/HoursBreakDown.jsx";
-import NotesSection from "../components/reports/NotesSection.jsx";
-import ReportFormActions from "../components/reports/ReportFormActions.jsx";
-import { useWeeklyReport } from "../hooks/useWeeklyReport.js";
+import Card from "@/components/ui/Card.jsx";
+import WeeklyReportHeader from "@/components/reports/form/WeeklyReportHeader.jsx";
+import WeekSelector from "@/components/reports/form/WeekSelector.jsx";
+import ProjectSelect from "@/components/reports/form/ProjectSelector.jsx";
+import TasksCompletedTable from "@/components/reports/form/TasksCompletedTable.jsx";
+import TasksPlannedList from "@/components/reports/form/TaskPlannedList.jsx";
+import FlaggableList from "@/components/reports/form/FlaggableList.jsx";
+import HoursBreakdown from "@/components/reports/form/HoursBreakdown.jsx";
+import NotesSection from "@/components/reports/form/NotesSection.jsx";
+import ReportFormActions from "@/components/reports/form/ReportFormActions.jsx";
+import { useWeeklyReport } from "@/hooks/useWeeklyReport.js";
 
 export default function WeeklyReportPage({ initialReport = null, editMode = false }) {
   const { report, isLocked, loading, updateField, handleSaveDraft, handleSubmit } =

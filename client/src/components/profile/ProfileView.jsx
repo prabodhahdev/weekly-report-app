@@ -1,10 +1,10 @@
 import { Mail, ShieldCheck, UserRound, Briefcase } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
-import PageLoader from "../components/ui/PageLoader.jsx";
-import ProfileBanner from "../components/profile/ProfileBanner.jsx";
-import InfoRow from "../components/profile/InfoRaw.jsx";
+import { useAuth } from "@/context/AuthContext";
+import PageLoader from "@/components/ui/PageLoader.jsx";
+import ProfileBanner from "@/components/profile/ProfileBanner.jsx";
+import InfoRow from "@/components/profile/InfoRow.jsx";
 
-const Profile = () => {
+const ProfileView = () => {
   const { user, loading } = useAuth();
 
   if (loading) return <PageLoader label="Loading profile..." />;
@@ -56,4 +56,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfileView;

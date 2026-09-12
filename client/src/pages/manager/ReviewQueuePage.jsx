@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import PageLoader from "../../components/ui/PageLoader.jsx";
-import ReportsTable from "../../components/reports/ReportsTable.jsx";
-import Pagination from "../../components/ui/Pagination.jsx";
-import apiFetch from "../../api/apiFetch.js";
+import PageLoader from "@/components/ui/PageLoader.jsx";
+import ReportsTable from "@/components/reports/list/ReportsTable.jsx";
+import Pagination from "@/components/ui/Pagination.jsx";
+import apiFetch from "@/api/apiFetch.js";
 
 const PAGE_SIZE = 10;
 

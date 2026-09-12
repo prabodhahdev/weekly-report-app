@@ -3,21 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Eye, Search } from "lucide-react";
 import { toast } from "react-toastify";
 
-import PageLoader from "../components/ui/PageLoader.jsx";
-import Pagination from "../components/ui/Pagination.jsx";
-import ReportActionsMenu from "../components/reports/ReportsActionsMenu.jsx";
-import apiFetch from "../api/apiFetch.js";
+import PageLoader from "@/components/ui/PageLoader.jsx";
+import Pagination from "@/components/ui/Pagination.jsx";
+import Avatar from "@/components/ui/Avatar.jsx";
+import ReportActionsMenu from "@/components/reports/list/ReportsActionsMenu.jsx";
+import apiFetch from "@/api/apiFetch.js";
 
 const PAGE_SIZE = 6;
-
-function initials(name = "") {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 const TeamMembersTable = () => {
   const navigate = useNavigate();
@@ -33,7 +25,7 @@ const TeamMembersTable = () => {
 
   async function fetchMembers() {
     try {
-        const response = await apiFetch("/api/auth/users");
+      const response = await apiFetch("/api/auth/users");
       const data = await response.json();
 
       if (!response.ok) {
@@ -82,7 +74,6 @@ const TeamMembersTable = () => {
 
   return (
     <div>
-      {/* Filter */}
       <div className="border-b border-[#dcdddf] p-5">
         <div className="relative max-w-sm">
           <Search
@@ -99,7 +90,6 @@ const TeamMembersTable = () => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -122,9 +112,7 @@ const TeamMembersTable = () => {
                 >
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1b496d]/10 text-[10px] font-semibold text-[#1b496d]">
-                        {initials(member.name) || "-"}
-                      </div>
+                      <Avatar name={member.name} size="sm" />
                       <span className="font-medium text-[#6b7280]">
                         {member.name}
                       </span>

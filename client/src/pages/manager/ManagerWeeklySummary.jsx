@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import apiFetch from "../../api/apiFetch";
-import WeeklySummaryFilters from "../../components/reports/week-summery/WeeklySummaryFilters";
-import WeeklySummaryMemberCard from "../../components/reports/week-summery/WeeklySummeryMemberCard";
+import apiFetch from "@/api/apiFetch";
+import WeeklySummaryFilters from "@/components/reports/summary/WeeklySummaryFilters";
+import WeeklySummaryMemberCard from "@/components/reports/summary/WeeklySummaryMemberCard";
 
-const ManagerWeeklySummery = () => {
+const ManagerWeeklySummary = () => {
     const [weekStart, setWeekStart] = useState("");
     const [section, setSection] = useState("blockers");
     const [reports, setReports] = useState([]);
@@ -99,4 +99,4 @@ const ManagerWeeklySummery = () => {
     );
 };
 
-export default ManagerWeeklySummery;
+export default ManagerWeeklySummary;

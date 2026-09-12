@@ -1,6 +1,5 @@
 import { CalendarDays } from "lucide-react";
-import ReportStatusBadge from "../reports/ReportStatusBadge.jsx";
-
+import ReportStatusBadge from "@/components/reports/list/ReportStatusBadge.jsx";
 export default function CurrentWeekCard({ weekStart, weekEnd, report, onCreateReport, formatDate }) {
   return (
     <div className="mt-6 rounded-xl border border-[#dcdddf] bg-white p-5 shadow-sm">

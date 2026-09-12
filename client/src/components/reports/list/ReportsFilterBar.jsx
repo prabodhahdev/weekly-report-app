@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import FilterSelect from "../ui/FilterSelect";
-import apiFetch from "../../api/apiFetch";
+import FilterSelect from "@/components/ui/FilterSelect";
+import apiFetch from "@/api/apiFetch";
 
 const getStatuses = (role) => {
     if (role === "manager") {

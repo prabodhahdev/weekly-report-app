@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FileText, Clock3, CheckCircle2, AlertTriangle } from "lucide-react";
 
-import apiFetch from "../../api/apiFetch";
-import { getCurrentWeek, formatDate } from "../../components/utils/date.js";
+import apiFetch from "@/api/apiFetch";
+import { getCurrentWeek, formatDate } from "@/utils/date.js";
 
-import PageLoader from "../../components/ui/PageLoader.jsx";
-import StatCard from "../../components/dashboard/StatCard.jsx";
-import CurrentWeekCard from "../../components/dashboard/CurrentWeekendCard.jsx";
-import RecentReportsTable from "../../components/dashboard/RecentReportTable.jsx";
+import PageLoader from "@/components/ui/PageLoader.jsx";
+import StatCard from "@/components/dashboard/StatCard.jsx";
+import CurrentWeekCard from "@/components/dashboard/CurrentWeekCard.jsx";
+import RecentReportsTable from "@/components/dashboard/RecentReportTable.jsx";
 
 const MemberDashboard = () => {
   const navigate = useNavigate();
