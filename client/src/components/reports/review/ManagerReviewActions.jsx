@@ -53,7 +53,7 @@ const ManagerReviewActions = ({ onReview, loading = false }) => {
                         type="button"
                         onClick={handleApprove}
                         disabled={loading}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#00df82] px-4 py-2.5 text-sm font-semibold text-[#010a1f] transition hover:bg-[#00c875] disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#00df82] px-4 py-2.5 text-sm font-semibold text-[#010a1f] transition hover:bg-[#00c875] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Check size={17} />
                         Approve
@@ -63,7 +63,7 @@ const ManagerReviewActions = ({ onReview, loading = false }) => {
                         type="button"
                         onClick={handleRequestChanges}
                         disabled={loading}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#1b496d] px-4 py-2.5 text-sm font-semibold text-[#1b496d] transition hover:bg-[#1b496d]/5 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#1b496d] px-4 py-2.5 text-sm font-semibold text-[#1b496d] transition hover:bg-[#1b496d]/5 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <MessageSquareText size={17} />
                         Request Changes
@@ -92,7 +92,7 @@ const ManagerReviewActions = ({ onReview, loading = false }) => {
                             type="button"
                             onClick={handleCancel}
                             disabled={loading}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <X size={16} />
                             Cancel
@@ -102,7 +102,7 @@ const ManagerReviewActions = ({ onReview, loading = false }) => {
                             type="button"
                             onClick={handleSubmitChanges}
                             disabled={loading || !comment.trim()}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1b496d] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#153b58] disabled:cursor-not-allowed disabled:opacity-50"
+                            className="inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg bg-[#1b496d] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#153b58] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <MessageSquareText size={16} />
                             {loading

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 import WeeklyReportPage from "../WeeklyReportPage.jsx";
 import apiFetch from "../../api/apiFetch.js";
+import BackButton from "../../components/ui/BackButton.jsx";
 
 export default function EditMyReportPage() {
     const { id } = useParams();
@@ -129,19 +130,17 @@ export default function EditMyReportPage() {
     }
 
     return (
-        <div className="w-full h-full flex flex-col">
-
-            <div className="flex-1 overflow-y-auto">
-
-                
-
-                <WeeklyReportPage
-                    initialReport={report}
-                    editMode={true}
-                />
-
-            </div>
-
+    <div className="min-h-screen">
+        <div className="px-4 pt-4 sm:px-6">
+            <BackButton />
         </div>
-    );
+
+        <div className="w-full">
+            <WeeklyReportPage
+                initialReport={report}
+                editMode={true}
+            />
+        </div>
+    </div>
+);
 }

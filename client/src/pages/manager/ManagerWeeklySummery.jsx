@@ -27,7 +27,11 @@ const ManagerWeeklySummery = () => {
                     return;
                 }
 
-                setReports(data.reports || []);
+                setReports(
+                    (data.reports || []).filter(
+                        (report) => report.status !== "draft"
+                    )
+                );
 
             } catch (error) {
                 console.error("Fetch weekly reports error:", error);
@@ -84,7 +88,7 @@ const ManagerWeeklySummery = () => {
                         <WeeklySummaryMemberCard
                             key={report._id}
                             member={report.member}
-                            content={report.currentVersion?.[section]}
+                            content={report.currentVersion?.[section] || null}
                             section={section}
                         />
                     ))}

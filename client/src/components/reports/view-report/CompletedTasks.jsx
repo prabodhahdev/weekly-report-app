@@ -24,7 +24,7 @@ const CompletedTasks = ({ tasks = [] }) => {
               <th className="px-4 py-3 font-semibold">Planned</th>
               <th className="px-4 py-3 font-semibold">Actual</th>
               <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Time</th>
+              <th className="px-4 py-3 font-semibold">Time Spent</th>
               <th className="px-4 py-3 font-semibold">Output / Deliverable</th>
             </tr>
           </thead>
@@ -38,13 +38,12 @@ const CompletedTasks = ({ tasks = [] }) => {
 
                 <td className="px-4 py-4">
                   <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      task.priority === "High"
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${task.priority === "High"
                         ? "bg-red-50 text-red-600"
                         : task.priority === "Medium"
-                        ? "bg-amber-50 text-amber-600"
-                        : "bg-[#dcdddf] text-[#6b7280]"
-                    }`}
+                          ? "bg-amber-50 text-amber-600"
+                          : "bg-[#dcdddf] text-[#6b7280]"
+                      }`}
                   >
                     {task.priority || "-"}
                   </span>
@@ -65,9 +64,9 @@ const CompletedTasks = ({ tasks = [] }) => {
                 </td>
 
                 <td className="px-4 py-4 whitespace-nowrap text-[#6b7280]">
-                  {task.timeSpent ?? task.hoursSpent ?? 0}h
+                  {task.spentHours ?? 0}h
                   <span className="mx-1 text-[#dcdddf]">/</span>
-                  {task.timePlanned ?? task.hoursPlanned ?? 0}h
+                  {task.plannedHours ?? 0}h
                 </td>
 
                 <td className="px-4 py-4 text-[#6b7280]">

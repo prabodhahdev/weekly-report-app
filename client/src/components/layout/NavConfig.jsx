@@ -15,7 +15,7 @@ const COMMON_ITEMS = [
 
 export const MEMBER_NAV_ITEMS = [
   { label: "Dashboard", path: "/member-dashboard", icon: LayoutDashboard },
-  { label: "My Weekly Report", path: "/member-report", icon: FilePenLine },
+  { label: "Create Report", path: "/member-report", icon: FilePenLine },
   { label: "My Reports", path: "/member-reports", icon: History },
   ...COMMON_ITEMS,
 ];

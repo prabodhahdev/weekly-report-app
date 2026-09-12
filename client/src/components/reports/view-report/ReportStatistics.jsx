@@ -6,15 +6,17 @@ import {
 } from "lucide-react";
 
 const ReportStatistics = ({ report }) => {
-    const completedTasks = report.completedTasks?.length || 0;
-    const plannedTasks = report.nextWeekTasks?.length || 0;
+    const completedTasks = report.tasksCompleted?.length || 0;
+
+    const plannedTasks = report.tasksPlanned?.length || 0;
+
     const blockers = report.blockers?.length || 0;
 
     const totalHours =
-        report.hoursBreakdown?.reduce(
-            (total, item) => total + Number(item.hours || 0),
-            0
-        ) || 0;
+        Number(report.hours?.development || 0) +
+        Number(report.hours?.testing || 0) +
+        Number(report.hours?.meetings || 0) +
+        Number(report.hours?.documentation || 0);
 
     const statistics = [
         {

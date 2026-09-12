@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import ViewReport from "../../components/reports/view-report/ViewReport";
 import VersionHistory from "../../components/reports/view-report/VersionHistory";
 import apiFetch from "../../api/apiFetch";
+import BackButton from "../../components/ui/BackButton";
+import EditButton from "../../components/ui/EditButton";
 
 const ViewReportPage = () => {
     const { id } = useParams();
@@ -84,39 +86,40 @@ const ViewReportPage = () => {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+   return (
+    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
 
-            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
+        <div className="flex items-center gap-2">
+            <BackButton />
 
-                {/* Report */}
-                <main className="min-w-0 flex-1">
+            {(report.status === "draft" ||
+                report.status === "needs_correction") && (
+                <EditButton reportId={report._id} />
+            )}
+        </div>
 
-                    <ViewReport
-                        report={selectedVersion}
-                    />
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
 
-                </main>
+            <main className="min-w-0 flex-1">
+                <ViewReport
+                    report={{
+                        ...selectedVersion,
+                        member: report.member,
+                    }}
+                />
+            </main>
 
-                {/* Versions */}
-                <aside className="w-full lg:w-80 lg:shrink-0">
-
-                    <VersionHistory
-                        versions={versions}
-                        selectedVersionId={
-                            selectedVersion._id
-                        }
-                        onViewVersion={
-                            handleViewVersion
-                        }
-                    />
-
-                </aside>
-
-            </div>
+            <aside className="w-full lg:w-80 lg:shrink-0">
+                <VersionHistory
+                    versions={versions}
+                    selectedVersionId={selectedVersion._id}
+                    onViewVersion={handleViewVersion}
+                />
+            </aside>
 
         </div>
-    );
+    </div>
+);
 };
 
 export default ViewReportPage;

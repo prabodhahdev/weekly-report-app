@@ -28,7 +28,7 @@ const WeeklySummaryMemberCard = ({
                                     key={index}
                                     className="text-sm leading-6 text-gray-700"
                                 >
-                                    • {item}
+                                     • {item.taskName || item.text}
                                 </li>
                             ))}
                         </ul>

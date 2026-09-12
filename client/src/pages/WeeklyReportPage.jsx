@@ -27,7 +27,7 @@ export default function WeeklyReportPage({ initialReport = null, editMode = fals
 
   return (
     <div className="w-full h-full flex flex-col bg-[#f2f2f2]">
-      <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8">
         <WeeklyReportHeader
           editMode={editMode}
           status={report.status}

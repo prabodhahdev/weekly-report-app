@@ -2,13 +2,24 @@ import { useEffect, useState } from "react";
 import FilterSelect from "../ui/FilterSelect";
 import apiFetch from "../../api/apiFetch";
 
-const STATUSES = [
-    { value: "", label: "All statuses" },
-    { value: "draft", label: "Draft" },
-    { value: "submitted", label: "Submitted" },
-    { value: "needs_correction", label: "Needs Correction" },
-    { value: "approved", label: "Approved" },
-];
+const getStatuses = (role) => {
+    if (role === "manager") {
+        return [
+            { value: "", label: "All statuses" },
+            { value: "submitted", label: "Submitted" },
+            { value: "needs_correction", label: "Needs Correction" },
+            { value: "approved", label: "Approved" },
+        ];
+    }
+
+    return [
+        { value: "", label: "All statuses" },
+        { value: "draft", label: "Draft" },
+        { value: "submitted", label: "Submitted" },
+        { value: "needs_correction", label: "Needs Correction" },
+        { value: "approved", label: "Approved" },
+    ];
+};
 
 const dateFieldClass =
     "h-10 rounded-lg border border-[#d6d9e2] px-3 text-sm text-[#656e79] bg-white outline-none transition-colors focus:ring-2 focus:ring-[#3d8086] focus:border-[#3d8086]";
@@ -20,6 +31,8 @@ export default function ReportsFilterBar({
     role
 }) {
     const [projects, setProjects] = useState([]);
+
+    const STATUSES = getStatuses(role);
 
     useEffect(() => {
         const fetchProjects = async () => {

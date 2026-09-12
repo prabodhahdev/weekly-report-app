@@ -13,7 +13,7 @@ import MyReportsPage from './pages/member/MyReportsPage'
 import EditMyReportPage from './pages/member/EditReportPage'
 import ViewMyReportPage from './pages/member/ViewReportPage'
 import ProfilePage from './pages/ProfilePage'
-import ReportsPage from './pages/manager/ReportsPage'
+import ReportsPage from './pages/manager/reports/ReportsPage'
 import ReviewQueuePage from './pages/manager/ReviewQueuePage'
 import TeamMembersPage from './pages/manager/TeamMembersPage'
 import UserManagement from './pages/manager/user/UserManagement'
@@ -36,21 +36,9 @@ function App() {
         <Route element={<ProtectedRoute allowedRole="member" />}>
           <Route element={<AppLayout />}>
             <Route path="/member-dashboard" element={<MemberDashboard />} />
-            {/* View existing report */}
-            <Route
-              path="/member-report"
-              element={<WeeklyReportPage />}
-            />
-
-            {/* Edit existing report */}
-            <Route
-              path="/member-report/:id/edit"
-              element={<EditMyReportPage />}
-            />
-            <Route
-              path="/member-report/:id"
-              element={<ViewMyReportPage />}
-            />
+            <Route path="/member-report" element={<WeeklyReportPage />}/>
+            <Route path="/member-report/:id/edit" element={<EditMyReportPage />}/>
+            <Route path="/member-report/:id"element={<ViewMyReportPage />}/>
             <Route path="/member-reports" element={<MyReportsPage />} />
           </Route>
         </Route>
