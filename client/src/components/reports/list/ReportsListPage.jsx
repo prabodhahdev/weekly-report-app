@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { History, Plus } from "lucide-react";
 
 import Card from "@/components/ui/Card.jsx";
@@ -6,6 +6,14 @@ import PageHeader from "@/components/ui/PageHeader.jsx";
 import Pagination from "@/components/ui/Pagination.jsx";
 import ReportsFilterBar from "./ReportsFilterBar.jsx";
 import ReportsTable from "./ReportsTable.jsx";
+
+const EMPTY_FILTERS = {
+    project: "",
+    status: "",
+    from: "",
+    to: "",
+    member: "",
+};
 
 export default function ReportsListPage({
     title,
@@ -17,60 +25,36 @@ export default function ReportsListPage({
     onNewReport,
     cardTitle = "Report history",
     pageSize = 6,
-    role
+    role,
+    pagination,
+    onPageChange,
+    filters: controlledFilters,
+    onFiltersChange,
 }) {
-    const [filters, setFilters] = useState({
-        project: "",
-        status: "",
-        from: "",
-        to: "",
-        member: "",
-    });
+    const [localFilters, setLocalFilters] = useState(EMPTY_FILTERS);
 
-    const [page, setPage] = useState(1);
-
-    const filteredReports = useMemo(() => {
-        return reports
-            .filter((r) => {
-                const projectId =
-                    typeof r.project === "object" ? r.project?._id : r.project;
-
-                if (filters.project && projectId !== filters.project) {
-                    return false;
-                }
-
-                if (filters.status && r.status !== filters.status) {
-                    return false;
-                }
-
-                if (filters.from && r.weekStart < filters.from) {
-                    return false;
-                }
-
-                if (filters.to && r.weekEnd > filters.to) {
-                    return false;
-                }
-
-                if (filters.member && r.memberName !== filters.member) {
-                    return false;
-                }
-
-                return true;
-            })
-            .sort((a, b) => (a.weekStart < b.weekStart ? 1 : -1));
-    }, [reports, filters]);
-
-    const totalPages = Math.max(1, Math.ceil(filteredReports.length / pageSize));
-
-    const pagedReports = filteredReports.slice(
-        (page - 1) * pageSize,
-        page * pageSize,
-    );
+    const filters = controlledFilters ?? localFilters;
+    const isServerPaged = Boolean(pagination && onPageChange);
 
     function handleFilterChange(next) {
-        setFilters(next);
-        setPage(1);
+        if (onFiltersChange) {
+            onFiltersChange(next);
+            return;
+        }
+
+        setLocalFilters(next);
     }
+
+    const page = isServerPaged ? pagination.page : 1;
+    const totalPages = isServerPaged
+        ? pagination.totalPages
+        : Math.max(1, Math.ceil(reports.length / pageSize));
+    const totalItems = isServerPaged
+        ? pagination.total
+        : reports.length;
+    const currentPageSize = isServerPaged
+        ? pagination.limit || pageSize
+        : pageSize;
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -92,9 +76,7 @@ export default function ReportsListPage({
                     }
                 />
 
-                {/* Reports Card */}
                 <Card title={cardTitle} icon={History} className="w-full">
-                    {/* Filters */}
                     <div className="mb-4">
                         <ReportsFilterBar
                             filters={filters}
@@ -104,10 +86,9 @@ export default function ReportsListPage({
                         />
                     </div>
 
-                    {/* Table + pagination */}
                     <div className="rounded-lg border border-[#dcdddf] overflow-hidden">
                         <ReportsTable
-                            reports={pagedReports}
+                            reports={reports}
                             showMember={showMember}
                             getActions={getActions}
                         />
@@ -115,9 +96,9 @@ export default function ReportsListPage({
                         <Pagination
                             page={page}
                             totalPages={totalPages}
-                            onPageChange={setPage}
-                            totalItems={filteredReports.length}
-                            pageSize={pageSize}
+                            onPageChange={onPageChange || (() => {})}
+                            totalItems={totalItems}
+                            pageSize={currentPageSize}
                         />
                     </div>
                 </Card>

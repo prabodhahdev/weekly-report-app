@@ -31,6 +31,22 @@ const AuthForm = ({ mode }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+         //  password validation
+        if (!isLogin) {
+            const passwordValid =
+                formData.password.length >= 8 &&
+                /[A-Z]/.test(formData.password) &&
+                /[a-z]/.test(formData.password) &&
+                /[0-9]/.test(formData.password) &&
+                /[^A-Za-z0-9]/.test(formData.password)
+
+            if (!passwordValid) {
+                toast.error(
+                    'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+                )
+                return
+            }
+        }
 
         setLoading(true)
 

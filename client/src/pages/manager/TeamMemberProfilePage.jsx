@@ -1,5 +1,5 @@
 import { ArrowLeft, Eye } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -8,6 +8,7 @@ import Pagination from "@/components/ui/Pagination.jsx";
 import Avatar from "@/components/ui/Avatar.jsx";
 import ReportsTable from "@/components/reports/list/ReportsTable.jsx";
 import apiFetch from "@/api/apiFetch.js";
+import { fetchReports } from "@/api/reportsApi.js";
 
 const PAGE_SIZE = 4;
 
@@ -17,14 +18,26 @@ const TeamMemberProfilePage = () => {
 
   const [member, setMember] = useState(null);
   const [reports, setReports] = useState([]);
+  const [statsReports, setStatsReports] = useState([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: PAGE_SIZE,
+    total: 0,
+    totalPages: 1,
+  });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchMemberData();
+    fetchMember();
   }, [id]);
 
-  async function fetchMemberData() {
+  useEffect(() => {
+    if (!id) return;
+    fetchPagedReports();
+  }, [id, page]);
+
+  async function fetchMember() {
     try {
       setLoading(true);
 
@@ -41,13 +54,8 @@ const TeamMemberProfilePage = () => {
       }
       setMember(selectedMember);
 
-      const reportsResponse = await apiFetch(`/api/reports?member=${id}`);
-      const reportsData = await reportsResponse.json();
-
-      if (!reportsResponse.ok) {
-        throw new Error(reportsData.message || "Failed to load reports");
-      }
-      setReports(reportsData.reports || []);
+      const allReportsData = await fetchReports({ member: id });
+      setStatsReports(allReportsData.reports || []);
     } catch (error) {
       console.error("Fetch team member profile error:", error);
       toast.error(error.message || "Failed to load team member");
@@ -57,25 +65,40 @@ const TeamMemberProfilePage = () => {
     }
   }
 
-  const totalReports = reports.length;
-  const approved = reports.filter((r) => r.status === "approved").length;
-  const needsCorrection = reports.filter((r) => r.status === "needs_correction").length;
-  const submitted = reports.filter((r) => r.status === "submitted").length;
-  const draft = reports.filter((r) => r.status === "draft").length;
+  async function fetchPagedReports() {
+    try {
+      const data = await fetchReports({
+        member: id,
+        page,
+        limit: PAGE_SIZE,
+      });
+
+      setReports(data.reports || []);
+      setPagination(
+        data.pagination || {
+          page,
+          limit: PAGE_SIZE,
+          total: data.reports?.length || 0,
+          totalPages: 1,
+        }
+      );
+    } catch (error) {
+      console.error("Fetch member reports error:", error);
+      toast.error(error.message || "Failed to load reports");
+    }
+  }
+
+  const totalReports = statsReports.length;
+  const approved = statsReports.filter((r) => r.status === "approved").length;
+  const needsCorrection = statsReports.filter((r) => r.status === "needs_correction").length;
+  const submitted = statsReports.filter((r) => r.status === "submitted").length;
 
   const stats = [
     { label: "Total Reports", value: totalReports },
     { label: "Approved", value: approved },
     { label: "Needs Correction", value: needsCorrection },
     { label: "Submitted", value: submitted },
-    { label: "Draft", value: draft },
   ];
-
-  const totalPages = Math.max(1, Math.ceil(reports.length / PAGE_SIZE));
-  const pagedReports = useMemo(
-    () => reports.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [reports, page]
-  );
 
   function getActions(report) {
     return [
@@ -123,13 +146,13 @@ const TeamMemberProfilePage = () => {
           </div>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map((stat) => (
             <div
               key={stat.label}
               className="rounded-xl border border-[#dcdddf] bg-white p-4 shadow-sm"
             >
-              <p className="text-xs text-[#6b7280]">{stat.label}</p>
+              <p className="text-md text-[#1b496d]">{stat.label}</p>
               <p className="mt-2 text-2xl font-semibold text-[#1b496d]">{stat.value}</p>
             </div>
           ))}
@@ -143,14 +166,14 @@ const TeamMemberProfilePage = () => {
             </p>
           </div>
 
-          {reports.length > 0 ? (
+          {reports.length > 0 || pagination.total > 0 ? (
             <>
-              <ReportsTable reports={pagedReports} getActions={getActions} />
+              <ReportsTable reports={reports} getActions={getActions} />
               <Pagination
-                page={page}
-                totalPages={totalPages}
+                page={pagination.page}
+                totalPages={pagination.totalPages}
                 onPageChange={setPage}
-                totalItems={reports.length}
+                totalItems={pagination.total}
                 pageSize={PAGE_SIZE}
               />
             </>

@@ -1,4 +1,3 @@
-
 import apiFetch from "./apiFetch";
 
 const BASE_URL = "/api/reports";
@@ -13,6 +12,35 @@ async function parseOrThrow(response, fallbackMessage) {
     }
 
     return data;
+}
+
+export function buildReportsQuery(params = {}) {
+    const query = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+            query.set(key, value);
+        }
+    });
+
+    const qs = query.toString();
+    return qs ? `?${qs}` : "";
+}
+
+export function fetchMyReports(params = {}) {
+    return apiFetch(
+        `${BASE_URL}/my-reports${buildReportsQuery(params)}`
+    ).then((res) =>
+        parseOrThrow(res, "Failed to load reports")
+    );
+}
+
+export function fetchReports(params = {}) {
+    return apiFetch(
+        `${BASE_URL}${buildReportsQuery(params)}`
+    ).then((res) =>
+        parseOrThrow(res, "Failed to load reports")
+    );
 }
 
 export function createReport(payload) {

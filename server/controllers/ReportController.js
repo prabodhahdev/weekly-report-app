@@ -1,6 +1,10 @@
 const Report = require('../models/Report')
 const ReportVersion = require('../models/ReportVersion')
 const Project = require('../models/Project')
+const {
+    getPagination,
+    buildPaginationMeta
+} = require('../utils/pagination')
 
 
 // Create a new report
@@ -103,15 +107,61 @@ const createReport = async (req, res) => {
 // Get my reports
 const getMyReports = async (req, res) => {
     try {
-        const reports = await Report.find({
+        const {
+            status,
+            project,
+            from,
+            to
+        } = req.query
+
+        const filter = {
             member: req.user.userId
-        })
+        }
+
+        if (status) {
+            filter.status = status
+        }
+
+        if (project) {
+            filter.project = project
+        }
+
+        if (from || to) {
+            filter.weekStart = {}
+
+            if (from) {
+                filter.weekStart.$gte = new Date(from)
+            }
+
+            if (to) {
+                filter.weekStart.$lte = new Date(to)
+            }
+        }
+
+        const { enabled, page, limit, skip } = getPagination(req.query)
+
+        const query = Report.find(filter)
             .populate('project', 'name')
             .populate('currentVersion')
             .sort({ weekStart: -1 })
 
+        if (enabled) {
+            query.skip(skip).limit(limit)
+        }
+
+        const [reports, total] = await Promise.all([
+            query,
+            Report.countDocuments(filter)
+        ])
+
         return res.status(200).json({
-            reports
+            reports,
+            pagination: buildPaginationMeta({
+                page,
+                limit,
+                total,
+                enabled
+            })
         })
 
     } catch (error) {
@@ -397,7 +447,9 @@ const getReports = async (req, res) => {
             member,
             project,
             status,
-            weekStart
+            weekStart,
+            from,
+            to
         } = req.query
 
         const filter = {}
@@ -412,6 +464,9 @@ const getReports = async (req, res) => {
 
         if (status) {
             filter.status = status
+        } else {
+            // Drafts are only visible to the member who owns them
+            filter.status = { $ne: 'draft' }
         }
 
         if (weekStart) {
@@ -424,16 +479,43 @@ const getReports = async (req, res) => {
                 $gte: startDate,
                 $lt: endDate
             }
+        } else if (from || to) {
+            filter.weekStart = {}
+
+            if (from) {
+                filter.weekStart.$gte = new Date(from)
+            }
+
+            if (to) {
+                filter.weekStart.$lte = new Date(to)
+            }
         }
 
-        const reports = await Report.find(filter)
+        const { enabled, page, limit, skip } = getPagination(req.query)
+
+        const query = Report.find(filter)
             .populate('member', 'name email role')
             .populate('project', 'name description')
             .populate('currentVersion')
             .sort({ weekStart: -1, updatedAt: -1 })
 
+        if (enabled) {
+            query.skip(skip).limit(limit)
+        }
+
+        const [reports, total] = await Promise.all([
+            query,
+            Report.countDocuments(filter)
+        ])
+
         return res.status(200).json({
-            reports
+            reports,
+            pagination: buildPaginationMeta({
+                page,
+                limit,
+                total,
+                enabled
+            })
         })
 
     } catch (error) {
