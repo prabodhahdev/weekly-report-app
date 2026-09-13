@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, Search } from "lucide-react";
@@ -8,6 +9,7 @@ import Pagination from "@/components/ui/Pagination.jsx";
 import Avatar from "@/components/ui/Avatar.jsx";
 import ReportActionsMenu from "@/components/reports/list/ReportsActionsMenu.jsx";
 import apiFetch from "@/api/apiFetch.js";
+import { fetchReports } from "@/api/reportsApi.js";
 
 const PAGE_SIZE = 6;
 
@@ -25,6 +27,8 @@ const TeamMembersTable = () => {
 
   async function fetchMembers() {
     try {
+      setLoading(true);
+
       const response = await apiFetch("/api/auth/users");
       const data = await response.json();
 
@@ -33,11 +37,43 @@ const TeamMembersTable = () => {
       }
 
       const users = data.users || [];
-      const teamMembers = users.filter((user) => user.role === "member");
-      setMembers(teamMembers);
+
+      const teamMembers = users.filter(
+        (user) => user.role === "member"
+      );
+
+      // Get report count for each team member
+      const membersWithReports = await Promise.all(
+        teamMembers.map(async (member) => {
+          try {
+            const reportsData = await fetchReports({
+              member: member._id,
+            });
+
+            return {
+              ...member,
+              reportsCount: reportsData.reports?.length || 0,
+            };
+          } catch (error) {
+            console.error(
+              `Failed to fetch reports for ${member.name}:`,
+              error
+            );
+
+            return {
+              ...member,
+              reportsCount: 0,
+            };
+          }
+        })
+      );
+
+      setMembers(membersWithReports);
     } catch (error) {
       console.error("Fetch team members error:", error);
-      toast.error(error.message || "Failed to load team members");
+      toast.error(
+        error.message || "Failed to load team members"
+      );
     } finally {
       setLoading(false);
     }
@@ -45,11 +81,17 @@ const TeamMembersTable = () => {
 
   const filteredMembers = useMemo(() => {
     return members.filter((member) =>
-      `${member.name} ${member.email}`.toLowerCase().includes(search.toLowerCase())
+      `${member.name} ${member.email}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
     );
   }, [members, search]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredMembers.length / PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredMembers.length / PAGE_SIZE)
+  );
+
   const pagedMembers = filteredMembers.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
@@ -65,12 +107,15 @@ const TeamMembersTable = () => {
       {
         label: "View Profile",
         icon: Eye,
-        onClick: () => navigate(`/manager-team/${member._id}`),
+        onClick: () =>
+          navigate(`/manager-team/${member._id}`),
       },
     ];
   }
 
-  if (loading) return <PageLoader label="Loading team members..." />;
+  if (loading) {
+    return <PageLoader label="Loading team members..." />;
+  }
 
   return (
     <div>
@@ -80,10 +125,13 @@ const TeamMembersTable = () => {
             size={17}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca3af]"
           />
+
           <input
             type="text"
             value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            onChange={(e) =>
+              handleSearchChange(e.target.value)
+            }
             placeholder="Search by name or email"
             className="w-full rounded-lg border border-[#d6d9e2] bg-white py-2.5 pl-9 pr-3 text-sm text-[#1b3040] outline-none transition focus:border-[#3d8086] focus:ring-2 focus:ring-[#3d8086]/15"
           />
@@ -97,7 +145,9 @@ const TeamMembersTable = () => {
               <th className="px-5 py-3">Name</th>
               <th className="px-5 py-3">Email</th>
               <th className="px-5 py-3">Reports</th>
-              <th className="px-5 py-3 w-16 text-center">Actions</th>
+              <th className="px-5 py-3 w-16 text-center">
+                Actions
+              </th>
             </tr>
           </thead>
 
@@ -107,32 +157,45 @@ const TeamMembersTable = () => {
                 <tr
                   key={member._id}
                   className={`border-t border-[#f2f2f2] hover:bg-[#f2f2f2]/50 transition-colors ${
-                    i % 2 ? "bg-white" : "bg-[#f2f2f2]/20"
+                    i % 2
+                      ? "bg-white"
+                      : "bg-[#f2f2f2]/20"
                   }`}
                 >
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-2.5">
-                      <Avatar name={member.name} size="sm" />
+                      <Avatar
+                        name={member.name}
+                        size="sm"
+                      />
+
                       <span className="font-medium text-[#6b7280]">
                         {member.name}
                       </span>
                     </div>
                   </td>
 
-                  <td className="px-5 py-4 text-[#6b7280]">{member.email}</td>
+                  <td className="px-5 py-4 text-[#6b7280]">
+                    {member.email}
+                  </td>
 
                   <td className="px-5 py-4 text-[#6b7280]">
                     {member.reportsCount || 0}
                   </td>
 
                   <td className="px-5 py-4">
-                    <ReportActionsMenu actions={getActions(member)} />
+                    <ReportActionsMenu
+                      actions={getActions(member)}
+                    />
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="px-5 py-10 text-center text-sm text-[#9ca3af]">
+                <td
+                  colSpan="4"
+                  className="px-5 py-10 text-center text-sm text-[#9ca3af]"
+                >
                   No team members found.
                 </td>
               </tr>
