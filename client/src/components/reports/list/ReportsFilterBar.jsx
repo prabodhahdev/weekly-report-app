@@ -24,6 +24,9 @@ const getStatuses = (role) => {
 const dateFieldClass =
     "h-10 rounded-lg border border-[#d6d9e2] px-3 text-sm text-[#656e79] bg-white outline-none transition-colors focus:ring-2 focus:ring-[#3d8086] focus:border-[#3d8086]";
 
+const searchFieldClass =
+    "h-10 w-56 rounded-lg border border-[#d6d9e2] px-3 text-sm text-[#656e79] bg-white outline-none transition-colors focus:ring-2 focus:ring-[#3d8086] focus:border-[#3d8086]";
+
 export default function ReportsFilterBar({
     filters,
     onChange,
@@ -77,11 +80,30 @@ export default function ReportsFilterBar({
         filters.status ||
         filters.from ||
         filters.to ||
-        filters.member;
+        filters.member ||
+        filters.search;
 
     return (
         <div className="flex flex-wrap items-center gap-3">
 
+            {/* Search member name or email */}
+            {role === "manager" && (
+                <input
+                    type="text"
+                    value={filters.search || ""}
+                    onChange={(e) =>
+                        update(
+                            "search",
+                            e.target.value
+                        )
+                    }
+                    placeholder="Search name or email"
+                    aria-label="Search member name or email"
+                    className={searchFieldClass}
+                />
+            )}
+
+            {/* Member filter */}
             {members && (
                 <FilterSelect
                     value={filters.member || ""}
@@ -108,6 +130,7 @@ export default function ReportsFilterBar({
                 </FilterSelect>
             )}
 
+            {/* Project filter */}
             <FilterSelect
                 value={filters.project}
                 onChange={(e) =>
@@ -132,6 +155,7 @@ export default function ReportsFilterBar({
                 ))}
             </FilterSelect>
 
+            {/* Status filter */}
             <FilterSelect
                 value={filters.status}
                 onChange={(e) =>
@@ -152,6 +176,7 @@ export default function ReportsFilterBar({
                 ))}
             </FilterSelect>
 
+            {/* From date */}
             <input
                 type="date"
                 value={filters.from}
@@ -169,6 +194,7 @@ export default function ReportsFilterBar({
                 to
             </span>
 
+            {/* To date */}
             <input
                 type="date"
                 value={filters.to}
@@ -182,6 +208,7 @@ export default function ReportsFilterBar({
                 aria-label="To date"
             />
 
+            {/* Clear filters */}
             {hasActiveFilters && (
                 <button
                     type="button"
@@ -191,7 +218,8 @@ export default function ReportsFilterBar({
                             status: "",
                             from: "",
                             to: "",
-                            member: ""
+                            member: "",
+                            search: ""
                         })
                     }
                     className="text-sm font-medium text-[#3d8086] hover:text-[#2f6367]"

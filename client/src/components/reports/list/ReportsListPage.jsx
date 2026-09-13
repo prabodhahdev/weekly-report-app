@@ -13,6 +13,7 @@ const EMPTY_FILTERS = {
     from: "",
     to: "",
     member: "",
+    search: "",
 };
 
 export default function ReportsListPage({
