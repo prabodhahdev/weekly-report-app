@@ -91,7 +91,6 @@ export default function EditProject() {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    credentials: "include",
                     body: JSON.stringify({
                         name: formData.name,
                         description: formData.description,
