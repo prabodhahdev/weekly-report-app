@@ -12,39 +12,84 @@ export default function ViewProject() {
     const [formData, setFormData] = useState({
         name: "",
         description: "",
+        members: [],
         isActive: true,
     });
 
+    const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchProject = async () => {
+        const fetchData = async () => {
             try {
-                const response = await apiFetch(`/api/projects/${id}`);
+                const [
+                    projectResponse,
+                    usersResponse
+                ] = await Promise.all([
+                    apiFetch(`/api/projects/${id}`),
+                    apiFetch("/api/auth/users"),
+                ]);
 
-                const data = await response.json();
+                const projectData =
+                    await projectResponse.json();
 
-                if (!response.ok) {
+                const usersData =
+                    await usersResponse.json();
+
+                if (!projectResponse.ok) {
                     throw new Error(
-                        data.message || "Failed to fetch project"
+                        projectData.message ||
+                        "Failed to fetch project"
+                    );
+                }
+
+                if (!usersResponse.ok) {
+                    throw new Error(
+                        usersData.message ||
+                        "Failed to fetch users"
                     );
                 }
 
                 setFormData({
-                    name: data.project.name || "",
-                    description: data.project.description || "",
-                    isActive: data.project.isActive,
+                    name:
+                        projectData.project.name ||
+                        "",
+                    description:
+                        projectData.project.description ||
+                        "",
+                    members:
+                        projectData.project.members?.map(
+                            (member) => member._id
+                        ) || [],
+                    isActive:
+                        projectData.project.isActive ??
+                        true,
                 });
+
+                setMembers(
+                    usersData.users || []
+                );
+
             } catch (error) {
-                console.error("Fetch project error:", error);
-                toast.error(error.message || "Failed to load project");
+                console.error(
+                    "Fetch project data error:",
+                    error
+                );
+
+                toast.error(
+                    error.message ||
+                    "Failed to load project"
+                );
+
                 navigate("/manager-projects");
+
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchProject();
+        fetchData();
+
     }, [id, navigate]);
 
     if (loading) {
@@ -61,9 +106,14 @@ export default function ViewProject() {
         <ProjectForm
             mode="view"
             formData={formData}
+            members={members}
             onChange={() => {}}
-            onSubmit={(e) => e.preventDefault()}
-            onCancel={() => navigate("/manager-projects")}
+            onSubmit={(e) =>
+                e.preventDefault()
+            }
+            onCancel={() =>
+                navigate("/manager-projects")
+            }
         />
     );
 }

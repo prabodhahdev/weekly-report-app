@@ -216,6 +216,7 @@ const getMyReport = async (req, res) => {
 
 
 // Update current report
+// Update current report
 const updateReport = async (req, res) => {
     try {
         const { id } = req.params
@@ -286,15 +287,9 @@ const updateReport = async (req, res) => {
             })
         }
 
-        /*
-         * Draft:
-         * Update the existing draft version.
-         *
-         * Needs correction:
-         * Create a completely new version.
-         */
-
+      
         if (report.status === 'needs_correction') {
+
             const latestVersion = await ReportVersion.findOne({
                 report: report._id
             }).sort({ versionNumber: -1 })
@@ -314,7 +309,7 @@ const updateReport = async (req, res) => {
                 achievements: achievements || [],
                 hours: hours || {},
                 notes: notes || '',
-                status: 'needs_correction',
+                status: 'draft',
                 managerComment: ''
             })
 
@@ -324,7 +319,7 @@ const updateReport = async (req, res) => {
             report.weekEnd = weekEnd
             report.project = project
             report.currentVersion = newVersion._id
-            report.status = 'needs_correction'
+            report.status = 'draft'
 
             await report.save()
 
@@ -335,21 +330,32 @@ const updateReport = async (req, res) => {
             })
         }
 
+        /*
+         * Normal draft:
+         * Update the existing draft version.
+         */
         currentVersion.weekStart = startDate
         currentVersion.weekEnd = weekEnd
         currentVersion.project = project
+
         currentVersion.tasksCompleted =
             tasksCompleted || []
+
         currentVersion.tasksPlanned =
             tasksPlanned || []
+
         currentVersion.blockers =
             blockers || []
+
         currentVersion.achievements =
             achievements || []
+
         currentVersion.hours =
             hours || {}
+
         currentVersion.notes =
             notes || ''
+
         currentVersion.status = 'draft'
 
         await currentVersion.save()
@@ -375,7 +381,6 @@ const updateReport = async (req, res) => {
         })
     }
 }
-
 
 // Submit report
 const submitReport = async (req, res) => {
@@ -405,20 +410,30 @@ const submitReport = async (req, res) => {
             })
         }
 
-        const version = await ReportVersion.findById(
+        const currentVersion = await ReportVersion.findById(
             report.currentVersion
         )
 
-        if (!version) {
+        if (!currentVersion) {
             return res.status(404).json({
                 message: 'Current report version not found'
             })
         }
 
-        version.status = 'submitted'
-        version.submittedAt = new Date()
+        /*
+         * Submit the CURRENT version.
+         *
+         * Important:
+         * Do NOT create a new version here.
+         *
+         * Example:
+         * Version 2 Draft → Version 2 Submitted
+         */
 
-        await version.save()
+        currentVersion.status = 'submitted'
+        currentVersion.submittedAt = new Date()
+
+        await currentVersion.save()
 
         report.status = 'submitted'
 
@@ -427,7 +442,7 @@ const submitReport = async (req, res) => {
         return res.status(200).json({
             message: 'Report submitted successfully',
             report,
-            version
+            version: currentVersion
         })
 
     } catch (error) {

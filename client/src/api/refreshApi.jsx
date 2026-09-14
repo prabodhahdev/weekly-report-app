@@ -1,6 +1,7 @@
 const refreshApi = async () => {
     try {
-        const refreshToken = localStorage.getItem('refreshToken')
+        const refreshToken =
+            localStorage.getItem('refreshToken')
 
         if (!refreshToken) {
             return false
@@ -22,19 +23,41 @@ const refreshApi = async () => {
         if (!response.ok) {
             localStorage.removeItem('accessToken')
             localStorage.removeItem('refreshToken')
+
             return false
         }
 
         const data = await response.json()
 
-        // Save new tokens
-        localStorage.setItem('accessToken', data.accessToken)
-        localStorage.setItem('refreshToken', data.refreshToken)
+        if (!data.accessToken || !data.refreshToken) {
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+
+            return false
+        }
+
+        // Save the NEW tokens
+        localStorage.setItem(
+            'accessToken',
+            data.accessToken
+        )
+
+        localStorage.setItem(
+            'refreshToken',
+            data.refreshToken
+        )
 
         return true
 
     } catch (error) {
-        console.error('Refresh token error:', error)
+        console.error(
+            'Refresh token error:',
+            error
+        )
+
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+
         return false
     }
 }

@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.post('/register', registerValidator, register)
 router.post('/login', login)
-router.get('/refresh', refresh)
+router.post('/refresh', refresh)
 router.post('/logout', logout )
 
 router.get('/profile', authMiddleware,getProfile)

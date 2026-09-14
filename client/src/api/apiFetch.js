@@ -2,6 +2,9 @@ import refreshApi from './refreshApi'
 
 const API_URL = import.meta.env.VITE_API_URL
 
+// Keep one refresh request at a time
+let refreshPromise = null
+
 const apiFetch = async (url, options = {}, retry = true) => {
 
     const accessToken = localStorage.getItem('accessToken')
@@ -35,7 +38,21 @@ const apiFetch = async (url, options = {}, retry = true) => {
     // Access token expired
     if (shouldRefresh) {
 
-        const refreshed = await refreshApi()
+        /*
+         * If another request is already refreshing,
+         * wait for that same refresh request.
+         *
+         * This prevents multiple refresh requests
+         * from using the same refresh token.
+         */
+        if (!refreshPromise) {
+            refreshPromise = refreshApi()
+                .finally(() => {
+                    refreshPromise = null
+                })
+        }
+
+        const refreshed = await refreshPromise
 
         if (!refreshed) {
             return response
