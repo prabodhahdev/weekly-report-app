@@ -15,6 +15,7 @@ const EMPTY_FILTERS = {
     from: "",
     to: "",
     member: "",
+    search:""
 };
 
 export default function ReportsPage() {
@@ -47,6 +48,7 @@ export default function ReportsPage() {
                 from: filters.from,
                 to: filters.to,
                 member: filters.member,
+                search:filters.search
             });
 
             setReports(data.reports || []);

@@ -5,7 +5,7 @@ const {
     getPagination,
     buildPaginationMeta
 } = require('../utils/pagination')
-
+const User = require('../models/User')
 
 // Create a new report
 const createReport = async (req, res) => {
@@ -454,26 +454,56 @@ const getReports = async (req, res) => {
             status,
             weekStart,
             from,
-            to
+            to,
+            search
         } = req.query
 
         const filter = {}
 
-        if (member) {
+        // Search member by name or email
+        if (search && search.trim()) {
+            const searchText = search.trim()
+
+            const users = await User.find({
+                $or: [
+                    {
+                        name: {
+                            $regex: searchText,
+                            $options: 'i'
+                        }
+                    },
+                    {
+                        email: {
+                            $regex: searchText,
+                            $options: 'i'
+                        }
+                    }
+                ]
+            }).select('_id')
+
+            filter.member = {
+                $in: users.map(user => user._id)
+            }
+        } else if (member) {
             filter.member = member
         }
 
+        // Filter by project
         if (project) {
             filter.project = project
         }
 
+        // Filter by status
         if (status) {
             filter.status = status
         } else {
-            // Drafts are only visible to the member who owns them
-            filter.status = { $ne: 'draft' }
+            // Drafts are not visible to managers
+            filter.status = {
+                $ne: 'draft'
+            }
         }
 
+        // Filter by specific week
         if (weekStart) {
             const startDate = new Date(weekStart)
 
@@ -484,7 +514,10 @@ const getReports = async (req, res) => {
                 $gte: startDate,
                 $lt: endDate
             }
-        } else if (from || to) {
+        }
+
+        // Filter by date range
+        else if (from || to) {
             filter.weekStart = {}
 
             if (from) {
@@ -496,13 +529,28 @@ const getReports = async (req, res) => {
             }
         }
 
-        const { enabled, page, limit, skip } = getPagination(req.query)
+        // Pagination
+        const {
+            enabled,
+            page,
+            limit,
+            skip
+        } = getPagination(req.query)
 
         const query = Report.find(filter)
-            .populate('member', 'name email role')
-            .populate('project', 'name description')
+            .populate(
+                'member',
+                'name email role'
+            )
+            .populate(
+                'project',
+                'name description'
+            )
             .populate('currentVersion')
-            .sort({ weekStart: -1, updatedAt: -1 })
+            .sort({
+                weekStart: -1,
+                updatedAt: -1
+            })
 
         if (enabled) {
             query.skip(skip).limit(limit)
