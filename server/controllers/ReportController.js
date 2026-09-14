@@ -216,7 +216,6 @@ const getMyReport = async (req, res) => {
 
 
 // Update current report
-// Update current report
 const updateReport = async (req, res) => {
     try {
         const { id } = req.params
@@ -420,15 +419,6 @@ const submitReport = async (req, res) => {
             })
         }
 
-        /*
-         * Submit the CURRENT version.
-         *
-         * Important:
-         * Do NOT create a new version here.
-         *
-         * Example:
-         * Version 2 Draft → Version 2 Submitted
-         */
 
         currentVersion.status = 'submitted'
         currentVersion.submittedAt = new Date()

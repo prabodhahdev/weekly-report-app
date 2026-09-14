@@ -10,7 +10,7 @@ import ReportsTable from "@/components/reports/list/ReportsTable.jsx";
 import apiFetch from "@/api/apiFetch.js";
 import { fetchReports } from "@/api/reportsApi.js";
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 6;
 
 const TeamMemberProfilePage = () => {
   const navigate = useNavigate();
