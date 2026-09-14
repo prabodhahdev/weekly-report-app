@@ -1,9 +1,14 @@
 const Project = require('../models/Project.js')
 
 // Create project
- const createProject = async (req, res) => {
+const createProject = async (req, res) => {
     try {
-        const { name, description, members } = req.body
+        const {
+            name,
+            description,
+            members,
+            isActive
+        } = req.body
 
         if (!name) {
             return res.status(400).json({
@@ -15,6 +20,7 @@ const Project = require('../models/Project.js')
             name,
             description,
             members: members || [],
+            isActive: isActive ?? true,
             createdBy: req.user.userId
         })
 
@@ -34,7 +40,7 @@ const Project = require('../models/Project.js')
 
 
 // Get all projects
- const getProjects = async (req, res) => {
+const getProjects = async (req, res) => {
     try {
         const projects = await Project.find()
             .populate('createdBy', 'name email')
@@ -56,7 +62,7 @@ const Project = require('../models/Project.js')
 
 
 // Get single project
- const getProject = async (req, res) => {
+const getProject = async (req, res) => {
     try {
         const project = await Project.findById(req.params.id)
             .populate('createdBy', 'name email')
@@ -83,9 +89,14 @@ const Project = require('../models/Project.js')
 
 
 // Update project
- const updateProject = async (req, res) => {
+const updateProject = async (req, res) => {
     try {
-        const { name, description, members, isActive } = req.body
+        const {
+            name,
+            description,
+            members,
+            isActive
+        } = req.body
 
         const project = await Project.findById(req.params.id)
 
@@ -129,7 +140,7 @@ const Project = require('../models/Project.js')
 
 
 // Delete project
- const deleteProject = async (req, res) => {
+const deleteProject = async (req, res) => {
     try {
         const project = await Project.findById(req.params.id)
 
@@ -156,7 +167,7 @@ const Project = require('../models/Project.js')
 
 
 // Get projects assigned to logged-in member
- const getMyProjects = async (req, res) => {
+const getMyProjects = async (req, res) => {
     try {
         const projects = await Project.find({
             members: req.user.userId,
@@ -177,7 +188,6 @@ const Project = require('../models/Project.js')
         })
     }
 }
-
 
 
 module.exports = {
