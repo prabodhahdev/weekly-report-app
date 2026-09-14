@@ -103,7 +103,7 @@ const AuthForm = ({ mode }) => {
 
     return (
         <div className="w-full max-w-md">
-
+            <h1>deploy test</h1>
             {/* Header */}
             <div className="mb-8 text-center">
                 <div className="mb-5 flex justify-center">
