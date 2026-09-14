@@ -28,7 +28,7 @@ ReportMe is a full-stack web application for creating, submitting, reviewing, an
 ## Deployment
 
 **Live Application:**
-https://weekly-report-app-amber.vercel.app
+https://weekly-report-app-p1ad.vercel.app
 
 ## Demo Login
 
