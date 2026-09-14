@@ -13,9 +13,7 @@ const cors = require('cors')
 const app = express()
 
 // Middlewares
-app.use(cors(
-    {origin: process.env.CLIENT_URL}
-))
+app.use(cors())
 app.use(express.json())
 
 //Connect the database
