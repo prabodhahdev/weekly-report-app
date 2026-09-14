@@ -36,7 +36,6 @@ export default function AddUser() {
                 "/api/auth/users",
                 {
                     method: "POST",
-                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
