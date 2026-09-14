@@ -11,6 +11,13 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
+                const accessToken = localStorage.getItem("accessToken");
+
+                if (!accessToken) {
+                    setUser(null);
+                    return;
+                }
+
                 const response = await apiFetch(
                     "/api/auth/profile"
                 );
@@ -41,17 +48,44 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Login
-    const login = (userData) => {
+    const login = (
+        userData,
+        accessToken,
+        refreshToken
+    ) => {
+        localStorage.setItem(
+            "accessToken",
+            accessToken
+        );
+
+        localStorage.setItem(
+            "refreshToken",
+            refreshToken
+        );
+
         console.log("LOGIN USER SET:", userData);
+
         setUser(userData);
     };
 
     // Logout
     const logout = async () => {
         try {
-            await apiFetch("/api/auth/logout", {
-                method: "POST",
-            });
+            const refreshToken =
+                localStorage.getItem("refreshToken");
+
+            await apiFetch(
+                "/api/auth/logout",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        refreshToken
+                    })
+                }
+            );
 
         } catch (error) {
             console.error(
@@ -60,6 +94,9 @@ export const AuthProvider = ({ children }) => {
             );
 
         } finally {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
             setUser(null);
         }
     };

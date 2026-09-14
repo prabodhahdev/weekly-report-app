@@ -21,18 +21,32 @@ export default function AddProject() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await apiFetch("/api/auth/users");
+                const response = await apiFetch(
+                    "/api/auth/users"
+                );
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || "Failed to fetch users");
+                    throw new Error(
+                        data.message ||
+                        "Failed to fetch users"
+                    );
                 }
 
                 setMembers(data.users || []);
+
             } catch (error) {
-                console.error("Fetch users error:", error);
-                toast.error(error.message || "Failed to load users");
+                console.error(
+                    "Fetch users error:",
+                    error
+                );
+
+                toast.error(
+                    error.message ||
+                    "Failed to load users"
+                );
+
             } finally {
                 setUsersLoading(false);
             }
@@ -64,31 +78,47 @@ export default function AddProject() {
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type":
+                            "application/json",
                     },
-                    credentials: "include",
                     body: JSON.stringify({
                         name: formData.name,
-                        description: formData.description,
+                        description:
+                            formData.description,
                         members: formData.members,
-                        isActive: formData.isActive,
+                        isActive:
+                            formData.isActive,
                     }),
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (!response.ok) {
                 throw new Error(
-                    data.message || "Failed to create project"
+                    data.message ||
+                    "Failed to create project"
                 );
             }
 
-            toast.success("Project created successfully");
+            toast.success(
+                "Project created successfully"
+            );
+
             navigate("/manager-projects");
+
         } catch (error) {
-            console.error("Create project error:", error);
-            toast.error(error.message || "Failed to create project");
+            console.error(
+                "Create project error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to create project"
+            );
+
         } finally {
             setLoading(false);
         }
@@ -101,8 +131,13 @@ export default function AddProject() {
             members={members}
             onChange={handleChange}
             onSubmit={handleSubmit}
-            onCancel={() => navigate("/manager-projects")}
-            loading={loading || usersLoading}
+            onCancel={() =>
+                navigate("/manager-projects")
+            }
+            loading={
+                loading ||
+                usersLoading
+            }
         />
     );
 }

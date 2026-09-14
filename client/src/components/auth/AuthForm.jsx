@@ -29,77 +29,82 @@ const AuthForm = ({ mode }) => {
         })
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-         //  password validation
-        if (!isLogin) {
-            const passwordValid =
-                formData.password.length >= 8 &&
-                /[A-Z]/.test(formData.password) &&
-                /[a-z]/.test(formData.password) &&
-                /[0-9]/.test(formData.password) &&
-                /[^A-Za-z0-9]/.test(formData.password)
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-            if (!passwordValid) {
-                toast.error(
-                    'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
-                )
-                return
-            }
-        }
+    // password validation
+    if (!isLogin) {
+        const passwordValid =
+            formData.password.length >= 8 &&
+            /[A-Z]/.test(formData.password) &&
+            /[a-z]/.test(formData.password) &&
+            /[0-9]/.test(formData.password) &&
+            /[^A-Za-z0-9]/.test(formData.password)
 
-        setLoading(true)
-
-        try {
-            const endpoint = isLogin
-                ? '/api/auth/login'
-                : '/api/auth/register'
-
-            const data = isLogin
-                ? {
-                    email: formData.email,
-                    password: formData.password
-                }
-                : formData
-
-            const response = await apiFetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-
-            const result = await response.json()
-
-            if (!response.ok) {
-                toast.error(result.errors ? result.errors[0].msg : result.msg)
-                return
-            }
-
-            toast.success(result.msg)
-
-            if (isLogin) {
-                login(result.user)
-
-                if (result.user.role === 'manager') {
-                    navigate('/manager-dashboard')
-                }
-                else {
-                    navigate('/member-dashboard')
-                }
-            }
-            else {
-                navigate('/')
-            }
-
-        } catch (error) {
-            console.error('Error:', error)
-            toast.error('Unable to connect to server')
-        } finally {
-            setLoading(false)
+        if (!passwordValid) {
+            toast.error(
+                'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+            )
+            return
         }
     }
+
+    setLoading(true)
+
+    try {
+        const endpoint = isLogin
+            ? '/api/auth/login'
+            : '/api/auth/register'
+
+        const data = isLogin
+            ? {
+                email: formData.email,
+                password: formData.password
+            }
+            : formData
+
+        const response = await apiFetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+            toast.error(result.errors ? result.errors[0].msg : result.msg)
+            return
+        }
+
+        toast.success(result.msg)
+
+        if (isLogin) {
+            login(
+                result.user,
+                result.accessToken,
+                result.refreshToken
+            )
+
+            if (result.user.role === 'manager') {
+                navigate('/manager-dashboard')
+            }
+            else {
+                navigate('/member-dashboard')
+            }
+        }
+        else {
+            navigate('/')
+        }
+
+    } catch (error) {
+        console.error('Error:', error)
+        toast.error('Unable to connect to server')
+    } finally {
+        setLoading(false)
+    }
+}
 
     return (
         <div className="w-full max-w-md">

@@ -2,15 +2,16 @@ const jwt = require('jsonwebtoken')
 
 const authMiddleware = (req, res, next) => {
     try {
-        // Get access token from cookie
-        const token = req.cookies.accessToken
+        // Get access token from Authorization header
+        const authHeader = req.headers.authorization
 
-        if (!token) {
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
                 msg: "Not authenticated"
-
             })
         }
+
+        const token = authHeader.split(' ')[1]
 
         // Verify token
         const decoded = jwt.verify(

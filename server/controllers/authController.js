@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const User = require('../models/User')
+const Project = require('../models/Project')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const RefreshToken = require('../models/RefreshToken')
@@ -71,9 +72,14 @@ const login = async (req, res) => {
 
         // 3. Create Access Token
         const accessToken = jwt.sign(
-            { userId: user._id, role: user.role },
+            {
+                userId: user._id,
+                role: user.role
+            },
             process.env.JWT_ACCESS_SECRET,
-            { expiresIn: process.env.JWT_ACCESS_EXPIRES }
+            {
+                expiresIn: process.env.JWT_ACCESS_EXPIRES
+            }
         )
 
         // 4. Create Refresh Token
@@ -94,21 +100,6 @@ const login = async (req, res) => {
             )
         })
 
-        // 7. Send access token as HttpOnly cookie
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 15 * 60 * 1000
-        })
-        // 8. Send refresh token as HttpOnly cookie
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
-
         console.log("LOGIN USER FROM DATABASE:", {
             id: user._id,
             name: user.name,
@@ -118,6 +109,8 @@ const login = async (req, res) => {
 
         return res.status(200).json({
             msg: "Login successful",
+            accessToken,
+            refreshToken,
             user: {
                 userId: user._id,
                 name: user.name,
@@ -135,11 +128,12 @@ const login = async (req, res) => {
     }
 }
 
+
 //refresh token
 const refresh = async (req, res) => {
     try {
-        // Get refresh token from cookie
-        const refreshToken = req.cookies.refreshToken
+        // Get refresh token from request body
+        const { refreshToken } = req.body
 
         if (!refreshToken) {
             return res.status(401).json({
@@ -221,24 +215,10 @@ const refresh = async (req, res) => {
             )
         })
 
-        // Set new access token cookie
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 15 * 60 * 1000
-        })
-
-        // Set new refresh token cookie
-        res.cookie('refreshToken', newRefreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
-
         return res.status(200).json({
-            msg: "Token refreshed successfully"
+            msg: "Token refreshed successfully",
+            accessToken,
+            refreshToken: newRefreshToken
         })
 
     } catch (error) {
@@ -250,11 +230,12 @@ const refresh = async (req, res) => {
     }
 }
 
+
 //logout
 const logout = async (req, res) => {
     try {
-        // Get refresh token from cookie
-        const refreshToken = req.cookies.refreshToken
+        // Get refresh token from request body
+        const { refreshToken } = req.body
 
         if (refreshToken) {
             // Hash the refresh token
@@ -270,20 +251,6 @@ const logout = async (req, res) => {
             )
         }
 
-        // Clear access token cookie
-        res.clearCookie('accessToken', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
-        })
-
-        // Clear refresh token cookie
-        res.clearCookie('refreshToken', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        })
-
         return res.status(200).json({
             msg: "Logout successful"
         })
@@ -297,30 +264,31 @@ const logout = async (req, res) => {
     }
 }
 
+
 //get profile
 const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.userId)
-            .select("name email role");
+            .select("name email role")
 
         if (!user) {
             return res.status(404).json({
                 message: "User not found"
-            });
+            })
         }
 
         return res.status(200).json({
             user
-        });
+        })
 
     } catch (error) {
-        console.error("Profile error:", error);
+        console.error("Profile error:", error)
 
         return res.status(500).json({
             message: "Server error"
-        });
+        })
     }
-};
+}
 
 
 // Get all users
@@ -342,6 +310,7 @@ const getUsers = async (req, res) => {
         })
     }
 }
+
 
 // Create user by manager
 const createUser = async (req, res) => {
@@ -379,6 +348,7 @@ const createUser = async (req, res) => {
         })
     }
 }
+
 
 // Update user role
 const updateUserRole = async (req, res) => {
@@ -460,6 +430,8 @@ const deleteUser = async (req, res) => {
         })
     }
 }
+
+
 module.exports = {
     register,
     login,
@@ -470,5 +442,4 @@ module.exports = {
     createUser,
     updateUserRole,
     deleteUser
-
 }

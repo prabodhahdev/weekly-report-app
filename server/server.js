@@ -7,7 +7,6 @@ const authRoutes = require('./routes/authRoutes')
 const projectRoutes = require('./routes/projectRoutes')
 const reportRoutes = require('./routes/reportRoutes')
 const aiRoutes = require('./routes/aiRoutes')
-const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
 // Initialize express app
@@ -15,12 +14,8 @@ const app = express()
 
 // Middlewares
 app.use(cors(
-    {origin: process.env.CLIENT_URL,
-    credentials: true}
+    {origin: process.env.CLIENT_URL}
 ))
-app.use(express.json())
-app.use(cookieParser())
-
 app.use(express.json())
 
 //Connect the database

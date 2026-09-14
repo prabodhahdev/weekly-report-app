@@ -27,10 +27,7 @@ const ManagerViewReport = () => {
             setLoading(true);
 
             const response = await apiFetch(
-                `/api/reports/${id}`,
-                {
-                    credentials: "include",
-                }
+                `/api/reports/${id}`
             );
 
             const data = await response.json();
@@ -83,7 +80,6 @@ const ManagerViewReport = () => {
                         "Content-Type":
                             "application/json",
                     },
-                    credentials: "include",
                     body: JSON.stringify(data),
                 }
             );
@@ -143,16 +139,20 @@ const ManagerViewReport = () => {
         <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
             <button
                 type="button"
-                onClick={() => navigate("/manager-reports")}
+                onClick={() =>
+                    navigate("/manager-reports")
+                }
                 className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#1b496dba] px-2 py-1 text-sm text-white cursor-pointer hover:bg-[#1b496d] transition"
             >
                 <ArrowLeft size={16} />
                 Back
             </button>
+
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
 
                 {/* Report */}
                 <main className="min-w-0 flex-1">
+
                     {/* Report Content */}
                     <ViewReport
                         report={{
@@ -164,12 +164,12 @@ const ManagerViewReport = () => {
                     {/* Manager Review Actions */}
                     {selectedVersion.status ===
                         "submitted" && (
-                            <ManagerReviewActions
-                                onReview={
-                                    handleReview
-                                }
-                            />
-                        )}
+                        <ManagerReviewActions
+                            onReview={
+                                handleReview
+                            }
+                        />
+                    )}
 
                 </main>
 

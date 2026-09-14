@@ -73,29 +73,46 @@ export default function ReportsPage() {
 
     async function handleReview(reportId, action, comment = "") {
         try {
-            const response = await apiFetch(`/api/reports/${reportId}/review`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    action,
-                    comment,
-                }),
-            });
+            const response = await apiFetch(
+                `/api/reports/${reportId}/review`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        action,
+                        comment,
+                    }),
+                }
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Failed to review report");
+                throw new Error(
+                    data.message ||
+                    "Failed to review report"
+                );
             }
 
-            toast.success(data.message || "Report reviewed successfully");
+            toast.success(
+                data.message ||
+                "Report reviewed successfully"
+            );
+
             loadReports();
+
         } catch (error) {
-            console.error("Review report error:", error);
-            toast.error(error.message || "Failed to review report");
+            console.error(
+                "Review report error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to review report"
+            );
         }
     }
 
@@ -106,7 +123,10 @@ export default function ReportsPage() {
             {
                 label: "View",
                 icon: Eye,
-                onClick: () => navigate(`/manager-report/${reportId}`),
+                onClick: () =>
+                    navigate(
+                        `/manager-report/${reportId}`
+                    ),
             },
         ];
 
@@ -115,12 +135,20 @@ export default function ReportsPage() {
                 {
                     label: "Approve",
                     icon: Check,
-                    onClick: () => handleReview(reportId, "approved", ""),
+                    onClick: () =>
+                        handleReview(
+                            reportId,
+                            "approved",
+                            ""
+                        ),
                 },
                 {
                     label: "Request Changes",
                     icon: MessageSquare,
-                    onClick: () => navigate(`/manager-report/${reportId}`),
+                    onClick: () =>
+                        navigate(
+                            `/manager-report/${reportId}`
+                        ),
                 }
             );
         }

@@ -3,16 +3,37 @@ import refreshApi from './refreshApi'
 const API_URL = import.meta.env.VITE_API_URL
 
 const apiFetch = async (url, options = {}, retry = true) => {
+
+    const accessToken = localStorage.getItem('accessToken')
+
     const response = await fetch(
         `${API_URL}${url}`,
         {
             ...options,
-            credentials: 'include',
+            headers: {
+                ...options.headers,
+                ...(accessToken && {
+                    Authorization: `Bearer ${accessToken}`
+                })
+            }
         }
     )
 
+    // Do not refresh these requests
+    const noRefreshRoutes = [
+        '/api/auth/login',
+        '/api/auth/register',
+        '/api/auth/refresh'
+    ]
+
+    const shouldRefresh =
+        response.status === 401 &&
+        retry &&
+        accessToken &&
+        !noRefreshRoutes.includes(url)
+
     // Access token expired
-    if (response.status === 401 && retry) {
+    if (shouldRefresh) {
 
         const refreshed = await refreshApi()
 
