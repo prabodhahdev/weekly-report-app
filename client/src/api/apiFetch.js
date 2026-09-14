@@ -21,7 +21,7 @@ const apiFetch = async (url, options = {}, retry = true) => {
         }
 
         // Retry the original request once
-        return apiFetch(url, options, false)
+        return await apiFetch(url, options, false)
     }
 
     return response
