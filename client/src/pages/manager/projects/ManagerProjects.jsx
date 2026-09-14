@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, Pencil, Plus } from "lucide-react";
+import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import PageLoader from "@/components/ui/PageLoader.jsx";
@@ -35,20 +35,60 @@ export default function ManagerProjects() {
     fetchProjects();
   }, []);
 
+  const handleDelete = async (project) => {
+    const confirmed = window.confirm(
+        `Are you sure you want to delete "${project.name}"?`
+    )
+
+    if (!confirmed) return
+
+    try {
+        const response = await apiFetch(
+            `/api/projects/${project._id}`,
+            {
+                method: "DELETE",
+            }
+        )
+
+        const data = await response.json()
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to delete project")
+        }
+
+        toast.success(data.message || "Project deleted successfully")
+
+        setProjects((prev) =>
+            prev.filter((item) => item._id !== project._id)
+        )
+
+    } catch (error) {
+        console.error("Delete project error:", error)
+        toast.error(error.message || "Failed to delete project")
+    }
+}
+
   function getActions(project) {
     return [
-      {
-        label: "View",
-        icon: Eye,
-        onClick: () => navigate(`/manager-projects/${project._id}`),
-      },
-      {
-        label: "Edit",
-        icon: Pencil,
-        onClick: () => navigate(`/manager-projects/${project._id}/edit`),
-      },
+        {
+            label: "View",
+            icon: Eye,
+            onClick: () => navigate(`/manager-projects/${project._id}`),
+        },
+        {
+            label: "Edit",
+            icon: Pencil,
+            onClick: () => navigate(`/manager-projects/${project._id}/edit`),
+        },
+        {
+            label: "Delete",
+            icon: Trash2,
+            onClick: () => handleDelete(project),
+        },
     ];
-  }
+}
+
+
 
   return (
     <div className="w-full h-full flex flex-col bg-[#f2f2f2]">

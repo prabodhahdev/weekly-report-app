@@ -150,6 +150,13 @@ const deleteProject = async (req, res) => {
             })
         }
 
+        // Do not allow deletion if members are assigned
+        if (project.members && project.members.length > 0) {
+            return res.status(400).json({
+                message: 'Cannot delete a project with assigned members'
+            })
+        }
+
         await project.deleteOne()
 
         res.status(200).json({
@@ -164,7 +171,6 @@ const deleteProject = async (req, res) => {
         })
     }
 }
-
 
 // Get projects assigned to logged-in member
 const getMyProjects = async (req, res) => {
